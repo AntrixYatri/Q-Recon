@@ -1,185 +1,136 @@
 import React from 'react';
-import { ArrowLeft, AlertTriangle, AlertOctagon, Info, CheckCircle, Download, FileSpreadsheet, FileJson } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import {
+  PlusCircle,
+  FileSpreadsheet,
+  AlertTriangle,
+  CheckCircle,
+  Download,
+  ArrowLeft,
+  Inbox,
+} from 'lucide-react';
+import StatCard from '../components/StatCard';
 
-export default function Results({ navigateTo, projectData }) {
-  // If no project selected, direct to dashboard
-  if (!projectData) {
-    return (
-      <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', padding: '3rem 1.5rem' }}>
-        <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No project selected for review</h3>
-        <button className="btn-primary" style={{ margin: '0 auto' }} onClick={() => navigateTo('dashboard')}>
-          Go to Dashboard
-        </button>
-      </div>
-    );
-  }
+export default function Results() {
+  // TODO: Connect to backend API
+  // Example:
+  // const [results, setResults] = useState(null);
+  // useEffect(() => {
+  //   async function fetchResults() {
+  //     const data = await analysisService.getAnalysisResults(analysisId);
+  //     setResults(data);
+  //   }
+  //   fetchResults();
+  // }, [analysisId]);
 
-  const handleDownloadJSON = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `QCR_Audit_${projectData.package_id}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  };
+  const results = null; // No hardcoded fake data
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-      {/* Back button and title */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-        <button 
-          className="btn-secondary" 
-          style={{ padding: '0.5rem', borderRadius: '50%' }}
-          onClick={() => navigateTo('dashboard')}
-        >
-          <ArrowLeft size={16} />
-        </button>
+    <div className="space-y-6">
+      {/* Header & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>Audit Result Details</span>
-          <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--text-primary)' }}>{projectData.road_name}</h2>
-        </div>
-      </div>
-
-      {/* Project Meta Card */}
-      <div className="glass-card" style={{
-        padding: '1.25rem 1.5rem',
-        marginBottom: '2rem',
-        background: 'linear-gradient(135deg, rgba(14, 25, 44, 0.5), rgba(15, 23, 42, 0.5))',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '1.5rem'
-      }}>
-        <div>
-          <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Package ID</span>
-          <div style={{ fontWeight: '700', marginTop: '0.2rem', fontFamily: 'var(--font-mono)' }}>{projectData.package_id}</div>
-        </div>
-        <div>
-          <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Location Details</span>
-          <div style={{ fontWeight: '700', marginTop: '0.2rem' }}>{projectData.district}, {projectData.state}</div>
-        </div>
-        <div>
-          <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Compliance State</span>
-          <div style={{ marginTop: '0.2rem' }}>
-            <span className={`badge ${projectData.status === 'CONSISTENT' ? 'badge-success' : 'badge-critical'}`}>
-              {projectData.status}
+          <div className="flex items-center gap-2 mb-1">
+            <Link
+              to="/dashboard"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center gap-1"
+            >
+              <ArrowLeft className="w-3 h-3" />
+              Dashboard
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">/</span>
+            <span className="text-xs font-mono font-semibold text-[#0c4a6e] dark:text-[#53B7E8] bg-[#C7EAFC]/60 dark:bg-sky-950/60 px-1.5 py-0.5 rounded border border-[#53B7E8]/40">
+              Analysis Results
             </span>
           </div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Analysis Results
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Tri-source discrepancy report across QM E-Form, Laboratory Datasheets, and QCR Register.
+          </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
-          <button 
-            className="btn-secondary" 
-            style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-            onClick={handleDownloadJSON}
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            disabled
+            className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-400 dark:text-slate-500 cursor-not-allowed shadow-2xs"
           >
-            <FileJson size={14} /> Export JSON
+            <Download className="w-4 h-4" />
+            <span>Export Summary</span>
           </button>
+          <Link
+            to="/analysis/new"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#53B7E8] hover:bg-[#3aa3d8] text-white rounded-lg text-xs font-semibold transition shadow-xs cursor-pointer"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>New Analysis</span>
+          </Link>
         </div>
       </div>
 
-      {/* Discrepancy List / Consistent Message */}
-      {projectData.total_discrepancies > 0 ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <AlertTriangle size={18} style={{ color: 'var(--color-warning)' }} /> 
-            Detected Discrepancies ({projectData.total_discrepancies})
+      {/* Structural Summary Metric Cards (Placeholders) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          title="Documents Analyzed"
+          value={results ? results.documentsCount : '—'}
+          subtitle="QM, Datasheets, QCR"
+          accentColor="#53B7E8"
+          icon={FileSpreadsheet}
+        />
+        <StatCard
+          title="Fields Compared"
+          value={results ? results.fieldsCompared : '—'}
+          subtitle="Tri-source parameters"
+          accentColor="#99CA84"
+          icon={CheckCircle}
+        />
+        <StatCard
+          title="Discrepancies Found"
+          value={results ? results.discrepancyCount : '—'}
+          subtitle="Flagged inconsistencies"
+          accentColor="#D4A700"
+          icon={AlertTriangle}
+        />
+        <StatCard
+          title="Confidence Score"
+          value={results ? results.confidenceScore : '—'}
+          subtitle="AI verification rating"
+          accentColor="#53B7E8"
+          icon={CheckCircle}
+        />
+      </div>
+
+      {/* Discrepancy List Section (Clean Empty/Placeholder State) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold text-slate-900 dark:text-white">
+            Identified Discrepancies
+          </h2>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+            // TODO: GET /api/analysis/:id/results
+          </span>
+        </div>
+
+        {/* Empty State / Integration Placeholder */}
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 p-12 text-center shadow-xs transition-colors duration-200">
+          <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 mx-auto mb-3">
+            <Inbox className="w-6 h-6" />
+          </div>
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+            No Discrepancies Loaded
           </h3>
-
-          {projectData.discrepancies.map((disc, idx) => {
-            const isCrit = disc.severity === 'critical';
-            return (
-              <div 
-                key={disc.id} 
-                className="glass-card" 
-                style={{
-                  borderLeft: `4px solid ${isCrit ? 'var(--color-critical)' : 'var(--color-warning)'}`,
-                  padding: '1.5rem',
-                  position: 'relative'
-                }}
-              >
-                {/* Header */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'between',
-                  alignItems: 'start',
-                  flexWrap: 'wrap',
-                  gap: '0.5rem',
-                  marginBottom: '1rem'
-                }}>
-                  <div>
-                    <span className={`badge ${isCrit ? 'badge-critical' : 'badge-warning'}`} style={{ marginBottom: '0.5rem' }}>
-                      {disc.severity} • {disc.discrepancy_type}
-                    </span>
-                    <h4 style={{ fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-primary)' }}>{disc.field}</h4>
-                  </div>
-                  <div style={{ textAlign: 'right', fontSize: '0.8rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>Match Confidence:</span>
-                    <div style={{ fontWeight: '700', fontSize: '1rem', color: 'var(--color-accent)' }}>{disc.confidence}%</div>
-                  </div>
-                </div>
-
-                {/* Values Comparison View */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                  gap: '1rem',
-                  marginBottom: '1.25rem',
-                  backgroundColor: 'rgba(0, 0, 0, 0.25)',
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border-color)'
-                }}>
-                  <div style={{ borderRight: '1px solid var(--border-color)', paddingRight: '0.5rem' }}>
-                    <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: '700' }}>
-                      Source A: {disc.document_a}
-                    </div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: '800', marginTop: '0.25rem', color: 'var(--text-primary)' }}>
-                      {disc.value_a}
-                    </div>
-                  </div>
-                  <div style={{ paddingLeft: '0.5rem' }}>
-                    <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: '700' }}>
-                      Source B: {disc.document_b}
-                    </div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: '800', marginTop: '0.25rem', color: isCrit ? 'var(--color-critical)' : 'var(--color-warning)' }}>
-                      {disc.value_b}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Explanation */}
-                <div style={{
-                  display: 'flex',
-                  gap: '0.6rem',
-                  alignItems: 'start',
-                  fontSize: '0.85rem',
-                  color: 'var(--text-secondary)',
-                  lineHeight: '1.5'
-                }}>
-                  <Info size={16} style={{ color: 'var(--color-primary)', flexShrink: 0, marginTop: '0.15rem' }} />
-                  <p>{disc.explanation}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="glass-card" style={{
-          padding: '3rem 2rem',
-          textAlign: 'center',
-          borderLeft: '4px solid var(--color-success)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1rem'
-        }}>
-          <CheckCircle size={48} style={{ color: 'var(--color-success)' }} />
-          <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Project Records fully Compliant</h3>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '600px', fontSize: '0.9rem', lineHeight: '1.6' }}>
-            AI engines scanned and mapped both the Quality Control Registers (QCR) and Material Test Datasheets. No numerical mismatches, layout variations, or anomalous values were found. The road metrics align with structural standards.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+            Analysis results will appear here once processing is complete and the backend API is connected.
           </p>
+
+          <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-mono text-slate-600 dark:text-slate-400">
+            <span>Integration Target:</span>
+            <code className="text-[#53B7E8]">analysisService.getAnalysisResults()</code>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

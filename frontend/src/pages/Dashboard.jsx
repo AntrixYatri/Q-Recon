@@ -1,228 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import { getProjects } from '../services/api';
-import { BarChart2, Shield, AlertOctagon, AlertTriangle, CheckCircle, FileText, ChevronRight, Search, Activity } from 'lucide-react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import {
+  PlusCircle,
+  FileSpreadsheet,
+  AlertTriangle,
+  CheckCircle2,
+  ShieldCheck,
+  ArrowRight,
+  Filter,
+} from 'lucide-react';
+import StatCard from '../components/StatCard';
+import StatusBadge from '../components/StatusBadge';
+import VerificationLineChart from '../components/VerificationLineChart';
+import VerificationBarChart from '../components/VerificationBarChart';
+import {
+  kpiMetrics,
+  weeklyActivityData,
+  documentStatusData,
+  recentVerifications,
+} from '../mocks/dashboardData';
 
-export default function Dashboard({ navigateTo, setProjectData }) {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await getProjects();
-        setProjects(data);
-      } catch (err) {
-        console.error("Failed to load dashboard projects data", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProjects();
-  }, []);
-
-  const handleViewDetails = (project) => {
-    setProjectData(project);
-    navigateTo('results');
-  };
-
-  // Calculations
-  const totalAnalyzed = projects.length;
-  const totalDiscrepancies = projects.reduce((acc, p) => acc + p.total_discrepancies, 0);
-  const criticalCount = projects.reduce((acc, p) => acc + p.critical, 0);
-  const warningCount = projects.reduce((acc, p) => acc + p.warning, 0);
-  const consistentCount = projects.filter(p => p.status === 'CONSISTENT').length;
-  const avgConfidence = projects.length > 0 
-    ? (projects.reduce((acc, p) => acc + p.ocr_confidence, 0) / projects.length).toFixed(1) 
-    : '0';
-
-  const filteredProjects = projects.filter(p => 
-    p.road_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.package_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.district.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
-        <p style={{ color: 'var(--text-secondary)' }}>Loading dashboard statistics...</p>
-      </div>
-    );
-  }
-
+export default function Dashboard() {
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-      <div className="section-title">
-        <BarChart2 size={22} style={{ color: 'var(--color-primary)' }} /> Audit Control & Analytics Dashboard
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Dashboard
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Overview of road quality-control verification and discrepancy detection.
+          </p>
+        </div>
+
+        <Link
+          to="/analysis/new"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#53B7E8] hover:bg-[#3aa3d8] text-white rounded-lg text-sm font-semibold transition shadow-xs cursor-pointer"
+        >
+          <PlusCircle className="w-4 h-4" />
+          <span>New Analysis</span>
+        </Link>
       </div>
 
-      {/* Aggregate Stats Cards */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: '1.25rem',
-        marginBottom: '2rem'
-      }}>
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', minHeight: '100px' }}>
-          <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Total Projects</span>
-            <FileText size={16} style={{ color: 'var(--color-primary)' }} />
-          </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '800', marginTop: '0.4rem' }}>{totalAnalyzed}</div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Quality Records Monitored</span>
-        </div>
-
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Critical Issues</span>
-            <AlertOctagon size={16} style={{ color: 'var(--color-critical)' }} />
-          </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '800', marginTop: '0.4rem', color: 'var(--color-critical)' }}>{criticalCount}</div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Requires Immediate Review</span>
-        </div>
-
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Warnings</span>
-            <AlertTriangle size={16} style={{ color: 'var(--color-warning)' }} />
-          </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '800', marginTop: '0.4rem', color: 'var(--color-warning)' }}>{warningCount}</div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Minor or Unit Inconsistencies</span>
-        </div>
-
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Consistent</span>
-            <CheckCircle size={16} style={{ color: 'var(--color-success)' }} />
-          </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '800', marginTop: '0.4rem', color: 'var(--color-success)' }}>{consistentCount}</div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Records in Full Compliance</span>
-        </div>
-
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>OCR Confidence</span>
-            <Activity size={16} style={{ color: 'var(--color-accent)' }} />
-          </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: '800', marginTop: '0.4rem', color: 'var(--color-accent)' }}>{avgConfidence}%</div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Average Scanner Accuracy</span>
-        </div>
+      {/* 1. Four KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          title={kpiMetrics.totalDocuments.label}
+          value={kpiMetrics.totalDocuments.value}
+          subtitle={kpiMetrics.totalDocuments.subtext}
+          trend="+12 this week"
+          trendDirection="up"
+          accentColor="#53B7E8"
+          icon={FileSpreadsheet}
+        />
+        <StatCard
+          title={kpiMetrics.verifiedDocuments.label}
+          value={kpiMetrics.verifiedDocuments.value}
+          subtitle={kpiMetrics.verifiedDocuments.subtext}
+          trend="+8.4% rate"
+          trendDirection="up"
+          accentColor="#3A801C"
+          icon={CheckCircle2}
+        />
+        <StatCard
+          title={kpiMetrics.activeDiscrepancies.label}
+          value={kpiMetrics.activeDiscrepancies.value}
+          subtitle={kpiMetrics.activeDiscrepancies.subtext}
+          trend="3 requires action"
+          trendDirection="warning"
+          accentColor="#D4A700"
+          icon={AlertTriangle}
+        />
+        <StatCard
+          title={kpiMetrics.verificationAccuracy.label}
+          value={kpiMetrics.verificationAccuracy.value}
+          subtitle={kpiMetrics.verificationAccuracy.subtext}
+          trend="Target >95%"
+          trendDirection="up"
+          accentColor="#99CA84"
+          icon={ShieldCheck}
+        />
       </div>
 
-      {/* Projects Search & Table */}
-      <div className="glass-card" style={{ padding: '1.25rem' }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          marginBottom: '1.25rem',
-          borderBottom: '1px solid var(--border-color)',
-          paddingBottom: '1rem'
-        }}>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: '700' }}>Monitored Roads</h3>
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            maxWidth: '350px'
-          }}>
-            <Search size={16} style={{
-              position: 'absolute',
-              left: '0.75rem',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: 'var(--text-muted)'
-            }} />
-            <input 
-              type="text" 
-              placeholder="Search by road, package, or district..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.55rem 0.55rem 0.55rem 2.25rem',
-                borderRadius: '8px',
-                backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                border: '1px solid var(--border-color)',
-                color: 'var(--text-primary)',
-                outline: 'none',
-                fontSize: '0.85rem'
-              }}
-            />
-          </div>
+      {/* 2. Verification Activity — Line Chart */}
+      <VerificationLineChart data={weeklyActivityData} />
+
+      {/* 3. Bar Chart + Recent Verifications Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Document Verification Status Bar Chart */}
+        <div className="lg:col-span-1 h-full">
+          <VerificationBarChart data={documentStatusData} />
         </div>
 
-        {/* Table layout */}
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: '600' }}>Road/Project details</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: '600' }}>Package ID</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: '600' }}>District / State</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: '600' }}>Discrepancies</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: '600' }}>Audit Status</th>
-                <th style={{ padding: '0.75rem 1rem', fontWeight: '600', textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProjects.length > 0 ? (
-                filteredProjects.map((project) => (
-                  <tr key={project.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background-color 0.2s' }} className="project-row">
-                    <td style={{ padding: '1rem' }}>
-                      <div style={{ fontWeight: '700', color: 'var(--text-primary)' }}>{project.road_name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>OCR Accuracy: {project.ocr_confidence}%</div>
+        {/* Recent Quality Verifications Table */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs transition-colors duration-200">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
+                Recent Quality Verifications
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Audit logs across PMGSY rural road packages
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md border border-slate-200 dark:border-slate-700 transition"
+              >
+                <Filter className="w-3 h-3 text-slate-400" />
+                <span>All Schemes</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto mt-2">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
+                  <th className="py-3 px-2">Package ID</th>
+                  <th className="py-3 px-2">Road / Scheme</th>
+                  <th className="py-3 px-2">Date</th>
+                  <th className="py-3 px-2">Documents</th>
+                  <th className="py-3 px-2">Discrepancies</th>
+                  <th className="py-3 px-2">Status</th>
+                  <th className="py-3 px-2 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                {recentVerifications.map((item) => (
+                  <tr key={item.packageId} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/50 transition">
+                    <td className="py-3.5 px-2 font-mono font-medium text-slate-900 dark:text-white">
+                      {item.packageId}
                     </td>
-                    <td style={{ padding: '1rem', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>{project.package_id}</td>
-                    <td style={{ padding: '1rem' }}>
-                      <div>{project.district}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{project.state}</div>
+                    <td
+                      className="py-3.5 px-2 max-w-[200px] truncate font-medium text-slate-800 dark:text-slate-200"
+                      title={item.roadScheme}
+                    >
+                      {item.roadScheme}
                     </td>
-                    <td style={{ padding: '1rem' }}>
-                      {project.total_discrepancies > 0 ? (
-                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                          {project.critical > 0 && <span className="badge badge-critical">{project.critical} Crit</span>}
-                          {project.warning > 0 && <span className="badge badge-warning">{project.warning} Warn</span>}
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No discrepancies</span>
-                      )}
+                    <td className="py-3.5 px-2 text-slate-500 dark:text-slate-400 font-mono text-[11px] whitespace-nowrap">
+                      {item.date}
                     </td>
-                    <td style={{ padding: '1rem' }}>
-                      <span className={`badge ${project.status === 'CONSISTENT' ? 'badge-success' : 'badge-critical'}`}>
-                        {project.status}
+                    <td className="py-3.5 px-2 text-slate-600 dark:text-slate-400 text-[11px]">
+                      {item.documents}
+                    </td>
+                    <td className="py-3.5 px-2 font-medium">
+                      <span
+                        className={
+                          item.discrepancies.startsWith('0')
+                            ? 'text-[#3A801C] dark:text-[#99CA84]'
+                            : 'text-[#D4A700] dark:text-[#FFF200]'
+                        }
+                      >
+                        {item.discrepancies}
                       </span>
                     </td>
-                    <td style={{ padding: '1rem', textAlign: 'right' }}>
-                      <button 
-                        className="btn-secondary" 
-                        style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center' }}
-                        onClick={() => handleViewDetails(project)}
+                    <td className="py-3.5 px-2">
+                      <StatusBadge status={item.status} label={item.status} />
+                    </td>
+                    <td className="py-3.5 px-2 text-right">
+                      <Link
+                        to="/analysis/results"
+                        className="inline-flex items-center gap-1 text-[#0c4a6e] dark:text-[#53B7E8] hover:text-[#53B7E8] dark:hover:text-[#C7EAFC] font-semibold text-xs transition"
                       >
-                        Details <ChevronRight size={14} />
-                      </button>
+                        <span>View Results</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" style={{ padding: '2rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                    No roads match your search query.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      
-      {/* Styles */}
-      <style>{`
-        .project-row:hover {
-          background-color: rgba(255, 255, 255, 0.02);
-        }
-      `}</style>
     </div>
   );
 }
