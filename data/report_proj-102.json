@@ -1,0 +1,17 @@
+{
+  "analysis_id": "proj-102",
+  "project": {
+    "road_name": "PMGSY - NH2 To Malthone Connectivity Bypass",
+    "package_id": "MP-12-BYP-09",
+    "district": "Sagar",
+    "state": "Madhya Pradesh"
+  },
+  "summary": {
+    "documents_analyzed": 2,
+    "total_discrepancies": 0,
+    "critical": 0,
+    "warning": 0,
+    "minor": 0
+  },
+  "discrepancies": []
+}

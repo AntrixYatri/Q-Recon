@@ -1,0 +1,41 @@
+# Python dependencies and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+venv/
+.venv/
+env/
+.env
+.env.local
+.env.*.local
+
+# Node/Vite frontend build and dependencies
+node_modules/
+dist/
+dist-ssr/
+*.local
+.eslintcache
+.oxlintrc.json
+
+# IDE settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Project raw and synthetic datasets / reports
+data/raw/*
+data/synthetic/*
+data/processed/*
+!data/raw/.gitkeep
+!data/synthetic/.gitkeep
+!data/processed/.gitkeep
