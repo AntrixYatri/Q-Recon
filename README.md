@@ -107,10 +107,10 @@ Open a separate terminal window and navigate to `frontend/`:
 
 ### 3. Running Automated Tests
 
-To verify that the backend routers, validation schemes, and response shapes compile:
+To verify that the OCR pipeline, normalizers, record linkers, severity/confidence calculators, and FastAPI routers pass unit tests:
 
 ```bash
-python -m unittest tests/test_backend.py
+python -m unittest discover -s tests -p "test_*.py"
 ```
 
 ---

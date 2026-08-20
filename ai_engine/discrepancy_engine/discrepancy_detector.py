@@ -1,99 +1,201 @@
+import os
+import json
+from ai_engine.data_integration.canonical_schema import CanonicalRecord
+from ai_engine.data_integration.record_linker import group_records
+from ai_engine.discrepancy_engine.cross_document_checker import analyze_field_across_records
+from ai_engine.discrepancy_engine.rule_engine import check_logical_rules
+from ai_engine.scoring.severity_calculator import calculate_severity
+from ai_engine.scoring.confidence_calculator import calculate_confidence
+from ai_engine.config.settings import DATA_PROCESSED_DIR, DATA_SYNTHETIC_DIR
+
+def detect_discrepancies(records: list) -> list:
+    """
+    Orchestrates comparison across a list of CanonicalRecords.
+    Links records into project groups, runs consensus comparisons, 
+    logical rules, and applies severity/confidence scoring.
+    """
+    discrepancies = []
+    
+    # 1. Group records by road project
+    grouped_projects = group_records(records)
+
+    for group in grouped_projects:
+        group_id = group["group_id"]
+        group_records_list = group["records"]
+
+        # Track documents in group for provenance reference
+        involved_docs = []
+        for rec in group_records_list:
+            involved_docs.append({
+                "document_id": rec.get_value("document_id") or "unknown_id",
+                "document_type": rec.get_value("document_type") or "unknown_type"
+            })
+
+        # 2. Run Cross-Document Field Level Checks (mismatches, missing values)
+        # We check all canonical fields that have configurations defined
+        from ai_engine.discrepancy_engine.comparison_config import COMPARISON_CONFIG
+        for field in COMPARISON_CONFIG.keys():
+            field_discrepancies = analyze_field_across_records(field, group_records_list)
+            for disc in field_discrepancies:
+                disc["group_id"] = group_id
+                discrepancies.append(disc)
+
+        # 3. Run Single-Record Logical Rules
+        for rec in group_records_list:
+            logical_discrepancies = check_logical_rules(rec)
+            for disc in logical_discrepancies:
+                # Add metadata
+                doc_id = rec.get_value("document_id")
+                doc_type = rec.get_value("document_type")
+                disc["group_id"] = group_id
+                disc["documents"] = [
+                    {
+                        "document_id": doc_id,
+                        "document_type": doc_type,
+                        "value": str(rec.get_value(disc["field"]))
+                    }
+                ]
+                discrepancies.append(disc)
+
+    # 4. Score and standardize all generated discrepancies
+    standardized_discrepancies = []
+    for disc in discrepancies:
+        # Run severity calculator
+        sev_res = calculate_severity(disc)
+        disc["severity"] = sev_res["severity"]
+        disc["severity_reasons"] = sev_res["reasons"]
+
+        # Run confidence calculator
+        conf_res = calculate_confidence(disc)
+        disc["confidence"] = conf_res["confidence_score"]
+        disc["confidence_level"] = conf_res["confidence_level"]
+        disc["confidence_factors"] = conf_res["factors"]
+        
+        # Standardize structure matching Canonical Discrepancy Schema (Task 4) with unique UUID (Task 5)
+        import uuid
+        canonical = {
+            "id": str(uuid.uuid4()),
+            "field": disc.get("field"),
+            "discrepancy_type": disc.get("discrepancy_type"),
+            "documents": disc.get("documents", []),
+            "values": disc.get("values", []),
+            "normalized_values": disc.get("normalized_values", []),
+            "comparison_status": disc.get("comparison_status", "mismatch"),
+            "difference": disc.get("difference"),
+            "percentage_difference": disc.get("percentage_difference"),
+            "severity": disc.get("severity", "MEDIUM"),
+            "severity_reasons": disc.get("severity_reasons", []),
+            "confidence": disc.get("confidence", 1.0),
+            "confidence_factors": disc.get("confidence_factors", {}),
+            "explanation": disc.get("explanation", ""),
+            "group_id": disc.get("group_id", "GROUP-1"),
+            "metadata": disc.get("metadata", {})
+        }
+        standardized_discrepancies.append(canonical)
+
+    return standardized_discrepancies
+
 def compare_documents(analysis_id: str) -> dict:
     """
-    Simulates loading mapped schemas for a project, running comparison rules,
-    and returning structured discrepancy records.
+    Loads documents associated with an analysis session,
+    performs cross-document mapping, and returns a structured discrepancy audit log.
     """
-    # Core comparison rule implementation
-    # Maps directly to the requested JSON response layout
-    
-    # In a full production system, this fetches records from local db/cache 
-    # and compares them parameter-by-parameter. Here, we build the mapped structure.
-    
-    # Simulated projects database
-    projects_db = {
-        "proj-101": {
-            "analysis_id": "proj-101",
-            "project": {
-                "road_name": "PMGSY - Karimnagar to Sultanabad Rural Link Route 4",
-                "package_id": "AP-04-102-R4",
-                "district": "Karimnagar",
-                "state": "Telangana"
-            },
-            "summary": {
-                "documents_analyzed": 3,
-                "total_discrepancies": 4,
-                "critical": 2,
-                "warning": 1,
-                "minor": 1
-            },
-            "discrepancies": [
-                {
-                    "id": "disc-101-1",
-                    "field": "Sub-base thickness (GSB)",
-                    "document_a": "Quality Control Register (QCR)",
-                    "document_b": "QM E-Form (National Quality Monitor Report)",
-                    "value_a": "150 mm",
-                    "value_b": "120 mm",
-                    "discrepancy_type": "Numerical Mismatch",
-                    "severity": "critical",
-                    "confidence": 96.5,
-                    "explanation": "Numerical comparison rules flagged a deficit of 30mm (20% below design thickness). QCR recorded 150mm but NQM report recorded 120mm."
-                },
-                {
-                    "id": "disc-101-2",
-                    "field": "Compressive Strength of Concrete (M20)",
-                    "document_a": "Test Datasheet (7-day Compressive Test)",
-                    "document_b": "Quality Control Register (QCR)",
-                    "value_a": "14.2 N/mm²",
-                    "value_b": "21.5 N/mm²",
-                    "discrepancy_type": "Numerical Mismatch",
-                    "severity": "critical",
-                    "confidence": 94.0,
-                    "explanation": "Test Datasheet strength value is below required M20 threshold (14.2 vs 15.0 N/mm² at 7 days), but QCR recorded 21.5 N/mm² (28-day value logged as 7-day) on same date."
-                },
-                {
-                    "id": "disc-101-3",
-                    "field": "Date of Joint Inspection",
-                    "document_a": "QM E-Form",
-                    "document_b": "Inspection Log Sheet",
-                    "value_a": "2026-08-10",
-                    "value_b": "2026-08-15",
-                    "discrepancy_type": "Date Inconsistency",
-                    "severity": "warning",
-                    "confidence": 99.0,
-                    "explanation": "Inspection e-form file upload date is August 10, 2026, but the inspector's physical log sheet lists the field inspection date as August 15, 2026."
-                },
-                {
-                    "id": "disc-101-4",
-                    "field": "Contractor Engineer Name",
-                    "document_a": "Quality Control Register (QCR)",
-                    "document_b": "Test Datasheet",
-                    "value_a": "K. R. Rao",
-                    "value_b": "K. Ramachandra Rao",
-                    "discrepancy_type": "Text Inconsistency",
-                    "severity": "minor",
-                    "confidence": 88.0,
-                    "explanation": "Fuzzy string match (88% similarity) indicates these represent the same individual, but naming records are spelling-inconsistent."
-                }
-            ]
+    records = []
+
+    # 1. Look for uploaded files locally in the processed folder
+    session_dir = os.path.join(DATA_PROCESSED_DIR, analysis_id)
+    if os.path.exists(session_dir):
+        for filename in os.listdir(session_dir):
+            if filename.endswith(".json"):
+                try:
+                    with open(os.path.join(session_dir, filename), "r") as f:
+                        data = json.load(f)
+                        records.append(CanonicalRecord.from_dict(data))
+                except Exception:
+                    pass
+
+    # 2. Demo path fallback: If no files exist, populate standard demo data 
+    # covering numerical, text, missing value, and equivalent unit test cases
+    if not records:
+        print(f"[Discrepancy Detector] No records found for analysis_id {analysis_id}. Generating mock demo dataset.")
+        records = get_demo_canonical_dataset()
+
+    discrepancies = detect_discrepancies(records)
+
+    # Return structured multi-document summary payload
+    total_disc = len(discrepancies)
+    severity_counts = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0}
+    for disc in discrepancies:
+        sev = str(disc.get("severity", "MEDIUM")).upper()
+        if sev in severity_counts:
+            severity_counts[sev] += 1
+            
+    # Programmatic verification of consistency (Task 6)
+    assert sum(severity_counts.values()) == total_disc, "Programmatic summary counts mismatch."
+
+    return {
+        "analysis_id": analysis_id,
+        "processing_status": "success",
+        "documents_analyzed": len(records),
+        "linked_record_groups": len(set(disc.get("group_id", "GROUP-1") for disc in discrepancies)) if discrepancies else 1,
+        "summary": {
+            "total_discrepancies": total_disc,
+            "critical": severity_counts["CRITICAL"],
+            "high": severity_counts["HIGH"],
+            "medium": severity_counts["MEDIUM"],
+            "low": severity_counts["LOW"]
         },
-        "proj-102": {
-            "analysis_id": "proj-102",
-            "project": {
-                "road_name": "PMGSY - NH2 To Malthone Connectivity Bypass",
-                "package_id": "MP-12-BYP-09",
-                "district": "Sagar",
-                "state": "Madhya Pradesh"
-            },
-            "summary": {
-                "documents_analyzed": 2,
-                "total_discrepancies": 0,
-                "critical": 0,
-                "warning": 0,
-                "minor": 0
-            },
-            "discrepancies": []
-        }
+        "discrepancies": discrepancies
     }
 
-    return projects_db.get(analysis_id, projects_db["proj-101"])
+def get_demo_canonical_dataset() -> list:
+    """
+    Returns a rich, linked canonical dataset used for demo / testing.
+    Includes:
+      - QCR (document_id: DEMO-QCR-01)
+      - Test Datasheet (document_id: DEMO-TEST-01)
+      - QM E-Form (document_id: DEMO-QM-01)
+    """
+    # 1. QCR
+    rec_qcr = CanonicalRecord()
+    rec_qcr.set_field("document_id", "DEMO-QCR-01", "QCR", "document_id")
+    rec_qcr.set_field("document_type", "QCR", "QCR", "document_type")
+    rec_qcr.set_field("project_code", "PRJ-2026-X1", "QCR", "project_code")
+    rec_qcr.set_field("road_name", "Belagavi Rural Highway", "QCR", "road_name", 0.94)
+    rec_qcr.set_field("district", "Belagavi", "QCR", "district", 0.95)
+    rec_qcr.set_field("inspection_date", "2026-08-12", "QCR", "inspection_date", 0.92)
+    rec_qcr.set_field("parameter", "Pavement Thickness", "QCR", "parameter")
+    rec_qcr.set_field("required_value", "150", "QCR", "required_value")
+    rec_qcr.set_field("measured_value", "150", "QCR", "measured_value") # 150 mm
+    rec_qcr.set_field("unit", "mm", "QCR", "unit")
+    rec_qcr.set_field("quality_status", "COMPLIANT", "QCR", "quality_status")
+
+    # 2. Test Datasheet
+    rec_test = CanonicalRecord()
+    rec_test.set_field("document_id", "DEMO-TEST-01", "TEST_DATASHEET", "document_id")
+    rec_test.set_field("document_type", "TEST_DATASHEET", "TEST_DATASHEET", "document_type")
+    rec_test.set_field("project_code", "PRJ-2026-X1", "TEST_DATASHEET", "project_code")
+    # Equivalent unit: '15 cm' -> 150 mm after unit normalization
+    rec_test.set_field("road_name", "Belagavi Rural Highway", "TEST_DATASHEET", "road_name")
+    rec_test.set_field("district", "belagavi", "TEST_DATASHEET", "district") # casing diff only
+    rec_test.set_field("inspection_date", "2026-08-12", "TEST_DATASHEET", "inspection_date")
+    rec_test.set_field("parameter", "Pavement Thickness", "TEST_DATASHEET", "parameter")
+    rec_test.set_field("required_value", "15", "TEST_DATASHEET", "required_value")
+    rec_test.set_field("measured_value", "12", "TEST_DATASHEET", "measured_value") # 12 cm = 120 mm (Numerical Mismatch!)
+    rec_test.set_field("unit", "cm", "TEST_DATASHEET", "unit")
+    rec_test.set_field("quality_status", "NON-COMPLIANT", "TEST_DATASHEET", "quality_status")
+
+    # 3. QM E-Form
+    rec_qm = CanonicalRecord()
+    rec_qm.set_field("document_id", "DEMO-QM-01", "QM_EFORM", "document_id")
+    rec_qm.set_field("document_type", "QM_EFORM", "QM_EFORM", "document_type")
+    rec_qm.set_field("project_code", "PRJ-2026-X1", "QM_EFORM", "project_code")
+    rec_qm.set_field("road_name", "Belagavi Rural Highway", "QM_EFORM", "road_name")
+    rec_qm.set_field("district", "Belagavi", "QM_EFORM", "district")
+    rec_qm.set_field("inspection_date", "2026-08-12", "QM_EFORM", "inspection_date")
+    # Parameter is missing (Missing value check)
+    rec_qm.set_field("measured_value", "150", "QM_EFORM", "measured_value")
+    rec_qm.set_field("unit", "mm", "QM_EFORM", "unit")
+    rec_qm.set_field("quality_status", "COMPLIANT", "QM_EFORM", "quality_status")
+
+    return [rec_qcr, rec_test, rec_qm]

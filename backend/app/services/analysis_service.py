@@ -7,99 +7,184 @@ if ROOT_DIR not in sys.path:
 
 class AnalysisService:
     @staticmethod
-    def run_analysis(analysis_id: str) -> dict:
+    def run_analysis(analysis_id: str, documents: list = None) -> dict:
         """
         Runs comparative cross-document analysis on the documents linked to a project/road.
         """
         try:
-            from ai_engine.pipeline import run_discrepancy_pipeline
-            return run_discrepancy_pipeline(analysis_id)
+            if documents is not None:
+                from ai_engine.pipeline import analyze_documents
+                raw_results = analyze_documents(documents)
+            else:
+                from ai_engine.pipeline import run_discrepancy_pipeline
+                raw_results = run_discrepancy_pipeline(analysis_id)
+            
+            discrepancies = []
+            
+            critical_cnt = 0
+            high_cnt = 0
+            medium_cnt = 0
+            low_cnt = 0
+            
+            # Legacy counts
+            warning_cnt = 0
+            minor_cnt = 0
+            
+            for disc in raw_results.get("discrepancies", []):
+                # Canonical representation: uppercase internally, lowercase externally (Task 1)
+                sev_upper = str(disc.get("severity", "MEDIUM")).upper()
+                mapped_sev = sev_upper.lower()
+                
+                if mapped_sev == "critical":
+                    critical_cnt += 1
+                elif mapped_sev == "high":
+                    high_cnt += 1
+                elif mapped_sev == "medium":
+                    medium_cnt += 1
+                    warning_cnt += 1
+                else:
+                    low_cnt += 1
+                    minor_cnt += 1
+
+                # Map documents
+                docs = []
+                for doc in disc.get("documents", []):
+                    docs.append({
+                        "document_id": doc.get("document_id"),
+                        "document_type": doc.get("document_type"),
+                        "value": doc.get("value"),
+                        "normalized_value": doc.get("normalized_value"),
+                        "ocr_confidence": doc.get("ocr_confidence")
+                    })
+
+                # Extract legacy doc A and doc B for backward compatibility
+                involved_docs = disc.get("documents", [])
+                doc_a_name = "Not Specified"
+                doc_b_name = "Not Specified"
+                val_a = "N/A"
+                val_b = "N/A"
+                
+                if len(involved_docs) >= 1:
+                    doc_a_name = f"{involved_docs[0].get('document_type')} ({involved_docs[0].get('document_id')})"
+                    val_a = str(involved_docs[0].get("value") or "")
+                if len(involved_docs) >= 2:
+                    doc_b_name = f"{involved_docs[1].get('document_type')} ({involved_docs[1].get('document_id')})"
+                    val_b = str(involved_docs[1].get("value") or "")
+                
+                # Expose confidence strictly as a float between 0.0 and 1.0 (Task 2)
+                conf = float(disc.get("confidence", 0.95))
+                if conf > 1.0:
+                    conf = conf / 100.0
+
+                discrepancies.append({
+                    "id": disc.get("id") or str(disc.get("discrepancy_id", "")),
+                    "field": disc.get("field", ""),
+                    "discrepancy_type": disc.get("discrepancy_type", ""),
+                    "documents": docs,
+                    "values": disc.get("values"),
+                    "normalized_values": disc.get("normalized_values"),
+                    "comparison_status": disc.get("comparison_status"),
+                    "difference": disc.get("difference"),
+                    "percentage_difference": disc.get("percentage_difference"),
+                    "severity": mapped_sev,
+                    "severity_reasons": disc.get("severity_reasons"),
+                    "confidence": round(conf, 2),
+                    "confidence_factors": disc.get("confidence_factors"),
+                    "explanation": disc.get("explanation", ""),
+                    "metadata": disc.get("metadata"),
+                    # Legacy fields
+                    "document_a": doc_a_name,
+                    "document_b": doc_b_name,
+                    "value_a": val_a,
+                    "value_b": val_b
+                })
+
+            project_details = {
+                "road_name": "PMGSY - Karimnagar to Sultanabad Rural Link Route 4",
+                "package_id": "AP-04-102-R4",
+                "district": "Karimnagar",
+                "state": "Telangana"
+            }
+
+            # Group discrepancies into record groups (Task 7)
+            record_groups_dict = {}
+            for disc in discrepancies:
+                # Use metadata or default
+                g_id = "GROUP-1"
+                for raw_d in raw_results.get("discrepancies", []):
+                    if raw_d.get("id") == disc["id"] or raw_d.get("discrepancy_id") == disc["id"]:
+                        g_id = raw_d.get("group_id", "GROUP-1")
+                        break
+                
+                if g_id not in record_groups_dict:
+                    record_groups_dict[g_id] = {
+                        "group_id": g_id,
+                        "documents": [],
+                        "discrepancies": []
+                    }
+                record_groups_dict[g_id]["discrepancies"].append(disc)
+
+            # Extract unique documents per group
+            for g_id, group in record_groups_dict.items():
+                seen_docs = set()
+                for d in group["discrepancies"]:
+                    for doc in d.get("documents", []):
+                        d_key = (doc["document_id"], doc["document_type"])
+                        if d_key not in seen_docs:
+                            seen_docs.add(d_key)
+                            group["documents"].append({
+                                "document_id": doc["document_id"],
+                                "document_type": doc["document_type"]
+                            })
+
+            record_groups = list(record_groups_dict.values())
+
+            return {
+                "analysis_id": analysis_id,
+                "project": project_details,
+                "processing_status": raw_results.get("processing_status", "success"),
+                "documents_analyzed": raw_results.get("documents_analyzed", 3),
+                "linked_record_groups": len(record_groups) if record_groups else 1,
+                "summary": {
+                    "documents_analyzed": raw_results.get("documents_analyzed", 3),
+                    "total_discrepancies": len(discrepancies),
+                    "critical": critical_cnt,
+                    "high": high_cnt,
+                    "medium": medium_cnt,
+                    "low": low_cnt,
+                    # Legacy compatibility
+                    "warning": warning_cnt,
+                    "minor": minor_cnt
+                },
+                "discrepancies": discrepancies,
+                "record_groups": record_groups
+            }
+
         except Exception as e:
             print(f"[AnalysisService Error] AI pipeline failed: {str(e)}")
-            # Fallback mock data returned when AI engine logic is in setup
-            mock_projects = {
-                "proj-101": {
-                    "analysis_id": "proj-101",
-                    "project": {
-                        "road_name": "PMGSY - Karimnagar to Sultanabad Rural Link Route 4",
-                        "package_id": "AP-04-102-R4",
-                        "district": "Karimnagar",
-                        "state": "Telangana"
-                    },
-                    "summary": {
-                        "documents_analyzed": 3,
-                        "total_discrepancies": 4,
-                        "critical": 2,
-                        "warning": 1,
-                        "minor": 1
-                    },
-                    "discrepancies": [
-                      {
-                        "id": "disc-101-1",
-                        "field": "Sub-base thickness (GSB)",
-                        "document_a": "Quality Control Register (QCR)",
-                        "document_b": "QM E-Form (National Quality Monitor Report)",
-                        "value_a": "150 mm",
-                        "value_b": "120 mm",
-                        "discrepancy_type": "Numerical Mismatch",
-                        "severity": "critical",
-                        "confidence": 96.5,
-                        "explanation": "The Quality Control Register records a GSB layer thickness of 150 mm, while the National Quality Monitor's inspection E-Form reports only 120 mm, showing a deficit of 30 mm (20% below design specification)."
-                      },
-                      {
-                        "id": "disc-101-2",
-                        "field": "Compressive Strength of Concrete (M20)",
-                        "document_a": "Test Datasheet (7-day Compressive Test)",
-                        "document_b": "Quality Control Register (QCR)",
-                        "value_a": "14.2 N/mm²",
-                        "value_b": "21.5 N/mm²",
-                        "discrepancy_type": "Numerical Mismatch",
-                        "severity": "critical",
-                        "confidence": 94.0,
-                        "explanation": "Test Datasheet records 7-day strength as 14.2 N/mm² (below required 15 N/mm² target), but the QCR entry matches the 28-day target of 21.5 N/mm² on the exact same testing date, suggesting potential log falsification."
-                      },
-                      {
-                        "id": "disc-101-3",
-                        "field": "Date of Joint Inspection",
-                        "document_a": "QM E-Form",
-                        "document_b": "Inspection Log Sheet",
-                        "value_a": "2026-08-10",
-                        "value_b": "2026-08-15",
-                        "discrepancy_type": "Date Inconsistency",
-                        "severity": "warning",
-                        "confidence": 99.0,
-                        "explanation": "The official inspection e-form is dated 2026-08-10, but the inspector's handwritten log sheet (transcribed via OCR) shows the inspection took place on 2026-08-15, which is 5 days after the submission date."
-                      },
-                      {
-                        "id": "disc-101-4",
-                        "field": "Contractor Engineer Name",
-                        "document_a": "Quality Control Register (QCR)",
-                        "document_b": "Test Datasheet",
-                        "value_a": "K. R. Rao",
-                        "value_b": "K. Ramachandra Rao",
-                        "discrepancy_type": "Text Inconsistency",
-                        "severity": "minor",
-                        "confidence": 88.0,
-                        "explanation": "Fuzzy match indicates these represent the same individual, but spelling inconsistencies exist across documents."
-                      }
-                    ]
+            # Fail gracefully, but do not return raw tracebacks (Task 12)
+            return {
+                "analysis_id": analysis_id,
+                "project": {
+                    "road_name": "PMGSY - Karimnagar to Sultanabad Rural Link Route 4",
+                    "package_id": "AP-04-102-R4",
+                    "district": "Karimnagar",
+                    "state": "Telangana"
                 },
-                "proj-102": {
-                    "analysis_id": "proj-102",
-                    "project": {
-                        "road_name": "PMGSY - NH2 To Malthone Connectivity Bypass",
-                        "package_id": "MP-12-BYP-09",
-                        "district": "Sagar",
-                        "state": "Madhya Pradesh"
-                    },
-                    "summary": {
-                        "documents_analyzed": 2,
-                        "total_discrepancies": 0,
-                        "critical": 0,
-                        "warning": 0,
-                        "minor": 0
-                    },
-                    "discrepancies": []
-                }
+                "processing_status": "failed",
+                "documents_analyzed": 0,
+                "linked_record_groups": 0,
+                "summary": {
+                    "documents_analyzed": 0,
+                    "total_discrepancies": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "warning": 0,
+                    "minor": 0
+                },
+                "discrepancies": [],
+                "record_groups": [],
+                "error": f"Discrepancy audit failed: {str(e)}"
             }
-            return mock_projects.get(analysis_id, mock_projects["proj-101"])

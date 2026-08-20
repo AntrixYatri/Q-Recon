@@ -1,98 +1,44 @@
-import numpy as np
-from ai_engine.preprocessing.text_cleaner import clean_label, normalize_ocr_text
+from ai_engine.document_processing.base_extractor import BaseDocumentExtractor
+from ai_engine.pipeline import analyze_document as legacy_analyze_document
 
-FIELD_LABELS = {
-    "report_number": ["Report Number"],
-    "state": ["State"],
-    "district": ["District"],
-    "block": ["Block"],
-    "habitation_name": ["Habitation"],
-    "habitation_id": ["Habitation ID"],
-    "facility_name": ["Facility"],
-    "facility_category": ["Category"],
-    "facility_subcategory": ["Subcategory"],
-    "inspection_date": ["Inspection Date"],
-    "inspection_type": ["Inspection Type"],
-    "inspector_name": ["Inspector"],
-    "quality_status": ["QUALITY STATUS"],
-}
-
-def group_into_lines(detections):
+class QCRProcessor(BaseDocumentExtractor):
     """
-    Groups bounding boxes into horizontal lines based on y-coordinate overlaps.
+    QCR Extractor wrapping the existing layout-aware OCR extraction pipeline.
+    Supports structured bypass input for demo and GPU-less testing.
     """
-    if not detections:
-        return []
+    def extract(self, document_path_or_dict) -> dict:
+        # Structured input bypass (Task 4)
+        if isinstance(document_path_or_dict, dict):
+            fields = document_path_or_dict.get("fields", {})
+            return {
+                "document_id": document_path_or_dict.get("document_id", "qcr_doc"),
+                "document_type": "QCR",
+                "classification_confidence": 1.0,
+                "processing_status": "success",
+                "extracted_fields": fields,
+                "field_confidence": {k: 1.0 for k in fields.keys()},
+                "metadata": {"source": "structured_input_bypass"}
+            }
 
-    # Sort detections by Y center coordinate
-    detections = sorted(detections, key=lambda d: d["yc"])
-    lines = []
-
-    for det in detections:
-        placed = False
-        for line in lines:
-            avg_y = np.mean([item["yc"] for item in line])
-            avg_h = np.mean([item["height"] for item in line])
-
-            # Group words in same line if Y gap is within threshold
-            if abs(det["yc"] - avg_y) <= max(avg_h * 0.65, 12):
-                line.append(det)
-                placed = True
-                break
-
-        if not placed:
-            lines.append([det])
-
-    # Sort each line from left to right (X coordinate)
-    for line in lines:
-        line.sort(key=lambda d: d["x1"])
-
-    reconstructed_lines = []
-    for line in lines:
-        text = " ".join(item["text"] for item in line)
-        reconstructed_lines.append({
-            "text": normalize_ocr_text(text),
-            "detections": line,
-            "y": np.mean([item["yc"] for item in line]),
-        })
-
-    reconstructed_lines.sort(key=lambda x: x["y"])
-    return reconstructed_lines
-
-def extract_from_reconstructed_lines(lines):
-    """
-    Searches the reconstructed text lines for key form labels and extracts their values.
-    """
-    extracted = {}
-    normalized_lines = [
-        {
-            "text": clean_label(line["text"]),
-            "original": line["text"],
-        }
-        for line in lines
-    ]
-
-    for field, labels in FIELD_LABELS.items():
-        for i, line in enumerate(normalized_lines):
-            line_text = line["text"]
-            for label in labels:
-                label_clean = clean_label(label)
-
-                if line_text.startswith(label_clean):
-                    value = line_text[len(label_clean):].strip()
-                    value = value.lstrip(":")
-
-                    if value:
-                        extracted[field] = value.strip()
-                        break
-
-                    # Fallback to the next line if the label value is empty
-                    if i + 1 < len(normalized_lines):
-                        next_value = normalized_lines[i + 1]["original"]
-                        extracted[field] = next_value.strip()
-                        break
-
-            if field in extracted:
-                break
-
-    return extracted
+        # Raw document path
+        try:
+            res = legacy_analyze_document(document_path_or_dict)
+            return {
+                "document_id": res.get("document_id") or "qcr_doc",
+                "document_type": "QCR",
+                "classification_confidence": 1.0,
+                "processing_status": "success" if res.get("processing_status") == "success" else "failed",
+                "extracted_fields": res.get("extracted_fields", {}),
+                "field_confidence": res.get("field_confidence", {}),
+                "metadata": res.get("ocr_metadata", {})
+            }
+        except Exception as e:
+            return {
+                "document_id": "qcr_doc",
+                "document_type": "QCR",
+                "classification_confidence": 1.0,
+                "processing_status": "failed",
+                "extracted_fields": {},
+                "field_confidence": {},
+                "metadata": {"error": str(e)}
+            }

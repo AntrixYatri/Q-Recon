@@ -13,7 +13,7 @@ async def run_analysis(request: AnalysisRequest):
     """
     try:
         # Run comparison and fetch results
-        results = AnalysisService.run_analysis(request.analysis_id)
+        results = AnalysisService.run_analysis(request.analysis_id, request.documents)
         
         # Save results log
         ReportService.save_analysis_result(request.analysis_id, results)
