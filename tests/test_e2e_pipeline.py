@@ -27,6 +27,9 @@ class TestE2EPipeline(unittest.TestCase):
         cls.qcr_image_path = os.path.join(ROOT_DIR, "data", "synthetic", "e2e_test_qcr.png")
         generate_qcr_image(cls.base_record, cls.qcr_image_path)
 
+        # Run OCR once and cache results
+        cls.qcr_ocr_result_cached = analyze_document(cls.qcr_image_path)
+
     @classmethod
     def tearDownClass(cls):
         # Clean up generated test image
@@ -41,7 +44,8 @@ class TestE2EPipeline(unittest.TestCase):
         self.assertTrue(os.path.exists(self.qcr_image_path))
         
         # Run standard QCR document OCR, extraction, normalization pipeline
-        res = analyze_document(self.qcr_image_path)
+        import copy
+        res = copy.deepcopy(self.qcr_ocr_result_cached)
         
         self.assertEqual(res.get("processing_status"), "success")
         self.assertEqual(res.get("document_type"), "QCR")
@@ -61,7 +65,8 @@ class TestE2EPipeline(unittest.TestCase):
         # Test Datasheet and QM E-Form are structured variants
         
         # 1. OCR QCR
-        qcr_ocr_result = analyze_document(self.qcr_image_path)
+        import copy
+        qcr_ocr_result = copy.deepcopy(self.qcr_ocr_result_cached)
         self.assertEqual(qcr_ocr_result.get("processing_status"), "success")
         
         # Build document inputs list
@@ -135,7 +140,7 @@ class TestE2EPipeline(unittest.TestCase):
         # Verify a numerical mismatch was detected on measured_value
         has_num_mismatch = any(d["discrepancy_type"] == "numerical_mismatch" and d["field"] == "measured_value" for d in discs_b)
         self.assertTrue(has_num_mismatch)
-
+ 
         # CASE C: Majority consensus
         # QCR says 150 (derived via OCR), QM says 150, TD says 120. Outlier is TD.
         # Consensus should be 150.
@@ -143,7 +148,7 @@ class TestE2EPipeline(unittest.TestCase):
         num_mismatch_disc = [d for d in res_c["discrepancies"] if d["field"] == "measured_value" and d["discrepancy_type"] == "numerical_mismatch"]
         if num_mismatch_disc:
             self.assertEqual(num_mismatch_disc[0]["metadata"].get("consensus_value"), "150")
-
+ 
         # CASE D: Ambiguous conflict (1 vs 1 mismatch on a field without authoritative source)
         td_mutated_date = td_mutated.copy()
         td_mutated_date["fields"] = td_mutated["fields"].copy()

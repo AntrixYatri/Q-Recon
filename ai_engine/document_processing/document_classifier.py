@@ -22,9 +22,8 @@ def classify_document(document_path: str, ocr_text: str = None) -> dict:
         
         if is_image:
             try:
-                # Lazy load easyocr to prevent start-up delays
-                import easyocr
-                reader = easyocr.Reader(['en'], gpu=False)
+                from ai_engine.extraction.easyocr_engine import get_reader
+                reader = get_reader()
                 results = reader.readtext(document_path)
                 text_content = " ".join(res[1] for res in results)
             except Exception as e:

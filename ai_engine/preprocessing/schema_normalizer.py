@@ -33,9 +33,12 @@ FIELD_ALIASES = {
     "test_date": "inspection_date",
     "test_dt": "inspection_date",
     "date_of_test": "inspection_date",
+    "monitoring_date": "inspection_date",
     "inspector": "inspector_name",
     "inspector_name": "inspector_name",
     "name_of_inspector": "inspector_name",
+    "qm_inspector": "inspector_name",
+    "monitoring_inspector": "inspector_name",
     
     # Location
     "district": "district",

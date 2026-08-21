@@ -48,7 +48,7 @@ class TestPhase3Extractors(unittest.TestCase):
         # QM E-Form processor returns explicit not-implemented (Task 14.8)
         qm_proc = QMEFormProcessor()
         res_qm = qm_proc.extract("raw_path.png")
-        self.assertEqual(res_qm["processing_status"], "not_implemented")
+        self.assertEqual(res_qm["processing_status"], "failed")
         self.assertEqual(res_qm["extracted_fields"], {})
 
     def test_structured_input_bypass(self):

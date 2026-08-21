@@ -37,7 +37,11 @@ CLASSIFICATION_CONFIG = {
             "qm e-form": 0.6,
             "monitoring inspection": 0.4,
             "e-form": 0.3,
-            "independent inspection": 0.2
+            "independent inspection": 0.2,
+            "independent quality monitoring": 0.6,
+            "quality monitoring report": 0.6,
+            "inspection form": 0.4,
+            "observations": 0.2
         }
     },
     

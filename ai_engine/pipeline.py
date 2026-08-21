@@ -128,7 +128,9 @@ def process_mixed_document(doc_input) -> dict:
             doc_id = "doc_" + str(id(doc_input))
 
         # Check structured bypass vs raw path
-        if "fields" in doc_input and "document_type" in doc_input:
+        if ("fields" in doc_input or "extracted_fields" in doc_input) and "document_type" in doc_input:
+            if "extracted_fields" in doc_input:
+                doc_input["fields"] = doc_input["extracted_fields"]
             structured_data = doc_input
             doc_type = doc_input["document_type"]
             # Validate field structures
@@ -276,6 +278,10 @@ def analyze_documents(document_inputs: list) -> dict:
             
             record = build_canonical_record(doc_id, doc_type, fields, ocr_meta)
             records.append(record)
+
+        # Deduplicate records before discrepancy detection
+        from ai_engine.data_integration.deduplicator import deduplicate_records
+        records = deduplicate_records(records)
 
         # 6. Run discrepancy engine
         discrepancies = detect_discrepancies(records)

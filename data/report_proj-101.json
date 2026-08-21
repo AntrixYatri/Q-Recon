@@ -27,7 +27,7 @@
   },
   "discrepancies": [
     {
-      "id": "7d9d07a6-a015-4d67-8a28-8cd080fcc66b",
+      "id": "5ab8ebc5-8f99-4736-aa50-490c10088eab",
       "field": "measured_value",
       "discrepancy_type": "numerical_mismatch",
       "documents": [
@@ -88,7 +88,7 @@
       "value_b": "150"
     },
     {
-      "id": "620b9849-7c8c-4509-8fb4-10fa2d9ebcde",
+      "id": "bdc99e07-9b6f-484a-bdfc-889b88762499",
       "field": "parameter",
       "discrepancy_type": "missing_value",
       "documents": [
@@ -127,7 +127,7 @@
       "value_b": "N/A"
     },
     {
-      "id": "48038d28-a559-4473-b878-46d6663a158c",
+      "id": "829e62a2-09e0-4499-bbae-979574777e8e",
       "field": "quality_status",
       "discrepancy_type": "logical_inconsistency",
       "documents": [
@@ -181,7 +181,7 @@
       ],
       "discrepancies": [
         {
-          "id": "7d9d07a6-a015-4d67-8a28-8cd080fcc66b",
+          "id": "5ab8ebc5-8f99-4736-aa50-490c10088eab",
           "field": "measured_value",
           "discrepancy_type": "numerical_mismatch",
           "documents": [
@@ -242,7 +242,7 @@
           "value_b": "150"
         },
         {
-          "id": "620b9849-7c8c-4509-8fb4-10fa2d9ebcde",
+          "id": "bdc99e07-9b6f-484a-bdfc-889b88762499",
           "field": "parameter",
           "discrepancy_type": "missing_value",
           "documents": [
@@ -281,7 +281,7 @@
           "value_b": "N/A"
         },
         {
-          "id": "48038d28-a559-4473-b878-46d6663a158c",
+          "id": "829e62a2-09e0-4499-bbae-979574777e8e",
           "field": "quality_status",
           "discrepancy_type": "logical_inconsistency",
           "documents": [

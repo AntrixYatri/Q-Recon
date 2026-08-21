@@ -39,6 +39,12 @@ class TestTestDatasheetE2E(unittest.TestCase):
         mismatch_record["quality_status"] = "NON-COMPLIANT"
         generate_test_datasheet_image(mismatch_record, cls.td_mismatch_path, variant="B", seed=42)
 
+        # Run OCR once and cache results
+        cls.classification_res_cached = classify_document(cls.td_match_path)
+        cls.qcr_res_cached = process_mixed_document(cls.qcr_path)
+        cls.td_match_res_cached = process_mixed_document(cls.td_match_path)
+        cls.td_mismatch_res_cached = process_mixed_document(cls.td_mismatch_path)
+
     @classmethod
     def tearDownClass(cls):
         # Cleanup
@@ -57,13 +63,14 @@ class TestTestDatasheetE2E(unittest.TestCase):
 
     def test_document_classification(self):
         # Verify Test Datasheet image is classified correctly
-        res = classify_document(self.td_match_path)
+        res = self.classification_res_cached
         self.assertEqual(res["document_type"], "TEST_DATASHEET")
 
     def test_case_a_match(self):
         # Case A: QCR (150 mm) vs Test Datasheet (150 mm)
-        qcr_res = process_mixed_document(self.qcr_path)
-        td_res = process_mixed_document(self.td_match_path)
+        import copy
+        qcr_res = copy.deepcopy(self.qcr_res_cached)
+        td_res = copy.deepcopy(self.td_match_res_cached)
         
         self.assertEqual(qcr_res["processing_status"], "success")
         self.assertEqual(td_res["processing_status"], "success")
@@ -99,8 +106,9 @@ class TestTestDatasheetE2E(unittest.TestCase):
 
     def test_case_b_mismatch(self):
         # Case B: QCR (150 mm) vs Test Datasheet (120 mm)
-        qcr_res = process_mixed_document(self.qcr_path)
-        td_res = process_mixed_document(self.td_mismatch_path)
+        import copy
+        qcr_res = copy.deepcopy(self.qcr_res_cached)
+        td_res = copy.deepcopy(self.td_mismatch_res_cached)
         
         self.assertEqual(qcr_res["processing_status"], "success")
         self.assertEqual(td_res["processing_status"], "success")

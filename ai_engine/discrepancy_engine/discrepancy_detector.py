@@ -86,6 +86,7 @@ def detect_discrepancies(records: list) -> list:
             "severity": disc.get("severity", "MEDIUM"),
             "severity_reasons": disc.get("severity_reasons", []),
             "confidence": disc.get("confidence", 1.0),
+            "confidence_level": disc.get("confidence_level", "HIGH"),
             "confidence_factors": disc.get("confidence_factors", {}),
             "explanation": disc.get("explanation", ""),
             "group_id": disc.get("group_id", "GROUP-1"),
