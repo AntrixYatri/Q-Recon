@@ -74,21 +74,20 @@ PARAMETERS = [
     }
 ]
 
-# Field labels for extraction
 FIELD_LABELS = {
-    "report_number": ["Report Number"],
-    "state": ["State"],
-    "district": ["District"],
-    "block": ["Block"],
-    "habitation_name": ["Habitation"],
-    "habitation_id": ["Habitation ID"],
-    "facility_name": ["Facility"],
+    "report_number": ["Report Number", "Report No"],
+    "state": ["State Name", "State"],
+    "district": ["District Name", "District"],
+    "block": ["Block Name", "Block"],
+    "habitation_name": ["Habitation Name", "Habitation"],
+    "habitation_id": ["Habitation ID", "Habitation Code"],
+    "facility_name": ["Facility Name", "Facility"],
     "facility_category": ["Category"],
     "facility_subcategory": ["Subcategory"],
-    "inspection_date": ["Inspection Date"],
-    "inspection_type": ["Inspection Type"],
-    "inspector_name": ["Inspector"],
-    "quality_status": ["QUALITY STATUS"]
+    "inspection_date": ["Inspection Date", "Date of Inspection", "Date"],
+    "inspection_type": ["Inspection Type", "Type of Inspection"],
+    "inspector_name": ["Inspector Name", "Name of Inspector", "Inspector", "Monitor Name", "Quality Monitor", "NQM", "SQM"],
+    "quality_status": ["QUALITY STATUS", "Quality Grading", "Status"]
 }
 
 # Targeted OCR settings (e.g. crop coordinates for the Inspector field on the generated form layout)
