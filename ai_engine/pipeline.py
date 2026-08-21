@@ -48,10 +48,11 @@ def analyze_document(image_input) -> dict:
         # 5. Schema Mapped Field Extraction
         extracted_fields = extract_from_reconstructed_lines(lines)
 
-        # 6. Apply Inspector Crop Pass Fallback
-        inspector_fallback = get_targeted_inspector_value(image_array, reader)
-        if inspector_fallback:
-            extracted_fields["inspector_name"] = inspector_fallback
+        # 6. Apply Inspector Crop Pass Fallback (only if not already extracted)
+        if not extracted_fields.get("inspector_name"):
+            inspector_fallback = get_targeted_inspector_value(image_array, reader)
+            if inspector_fallback:
+                extracted_fields["inspector_name"] = inspector_fallback
 
         # 7. Normalize Extracted Values
         normalized_fields = {}

@@ -6,9 +6,16 @@ import matplotlib.font_manager as fm
 def get_system_font(size: int):
     """
     Locates an available system TrueType font or falls back to PIL default font.
+    Prioritises clean, standard Sans-Serif fonts for OCR readability.
     """
     try:
         fonts = fm.findSystemFonts()
+        # Search for clean, readable standard fonts first
+        for name in ["arial.ttf", "calibri.ttf", "dejavusans.ttf", "liberationsans.ttf", "segoeui.ttf", "verdana.ttf"]:
+            for f in fonts:
+                if name in f.lower():
+                    return ImageFont.truetype(f, size)
+        
         if fonts:
             return ImageFont.truetype(fonts[0], size)
         

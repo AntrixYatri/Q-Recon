@@ -1,0 +1,102 @@
+State,District,Block,Habitation Name,Habitation ID,Facility Name,Address,Facility Category,Facility Subcategory,Latitude,Longitude
+Karnataka,Shimoga,Hosanagar,Yabagodu,1105742,bus stand,yabagodu,Transport/Admin,Bus Stand,13.839205889963,75.007498338819
+Karnataka,Belgaum,Khanapur,Bogur,172702,Bus stand,Bogur,Transport/Admin,Bus Stand,15.642451666666,74.705748333333
+Karnataka,Dharwad,Kundgol,Saunshi,964546,Panchayat Headquarter,Saunshi,Transport/Admin,Panchayat Headquarter,15.205430668883,75.304266210523
+Karnataka,Bijapur,Sindagi,Jalawad LT1,445999,Bus Stand,Jalawad LT1,Transport/Admin,Bus Stand,16.76710758,76.14311665
+Karnataka,Belgaum,Bailahongala,Gaddikaravinakoppa,333826,Bus Stand,Gaddikaravinakoppa,Transport/Admin,Bus Stand,15.772913,74.71018554
+Karnataka,Mysore,T.Narasipur,Talakadu,1027896,karnataka grameena bank,talakadu,Transport/Admin,Bank,12.189436331391,77.03047234565
+Karnataka,Belgaum,Raibag,alakanur,1346931, Bus Stand,Alakanur,Transport/Admin,Bus Stand,16.53389519,74.9127896
+Karnataka,Bellary,Siruguppa,Sirigeri,997434,Govt  Pre University college,sirigeri,Education ,Higher Secondary School,15.44481309,76.81970019
+Karnataka,Dakshina Kannada,Mangalore,Sannamadaka,951340,high school ,sannamadaka,Education ,High School - General,12.83657962,74.89039182
+Karnataka,Chamarajanagar,Kollegala,Voddaradoddi,1099924,govt higher primary school ,voddaradhoddi,Education ,Higher Secondary School,12.057833333333,77.40581
+Karnataka,Belgaum,Khanapur,Kunkikoppa,601815,bus stop ,kunkikopp cross ,Transport/Admin,Bus Stand,15.583276160342,74.616689003476
+Karnataka,Tumkur,Tumkur,Kaidala,481628,MPCS Kaidala in Tumkur Tq,MPCS Kaidala in Tumkur Tq,Agro ,Collection Centre or Pack House,13.300624999999,77.080546666666
+Karnataka,Shimoga,Sagar,Kalmane,492254,Kilmany bus stand,Hulimane,Transport/Admin,Bus Stand,14.125462468029,75.008320201793
+Karnataka,Chickballapur,Sidlaghatta,Tatahalli,1035347,milk collection centre ,Tatahalli,Agro ,Collection Centre or Pack House,13.429936333559,77.877499116585
+Karnataka,Uttara Kannada,Sirsi,Dasankoppa,252998,Malnad Highschool,Dasankoppa,Education ,High School - General,14.69547738,75.02559954
+Karnataka,Kolar,Bangarpet,Hanchala,395523,ITI College,Hanchala,Education ,ITI,13.04796822,78.15564713
+Karnataka,Haveri,Shiggoan,Hirebendigeri,423434,school,at HIrebendigeri,Education ,High School - General,15.08395329,75.21673073
+Karnataka,Mysore,Krishnarajanagar,hosur kallahally,426927,High school,Hosur kallahalli,Education ,High School - General,12.461868333333,76.44757
+Karnataka,Tumkur,Madhugiri,Byalya,187578,Milk production co operative society Byalya ,Byalya Madhugiri taluk,Agro ,Collection Centre or Pack House,13.64941838,77.30961296
+Karnataka,Gadag,Ron,Hunagundi,428472,Gram panchayat ,Hunagundi ,Transport/Admin,Panchayat Headquarter,15.78492284,75.69038098
+Karnataka,Chamarajanagar,CR Nagar,Venkataiahnachatra,1094609,Vijay Bank,Venkatainachatra,Transport/Admin,Bank,11.859988896176,76.956849480048
+Karnataka,Hassan,Hassan,Yelagunda,1110156,Panchayat head quarter,yelagunda Hassan tq,Transport/Admin,Panchayat Headquarter,13.14733371,76.11596111
+Karnataka,Chitradurga,Hiriyur,Samudrahalli,946890,Revenue,Samudrahally Main road,Agro ,Is Part of Rurban Cluster?,13.95031761,76.75205128
+Karnataka,Chamarajanagar,Kollegala,Peddanapalya,843747,govt higher primary school,peddanapallya,Education ,Higher Secondary School,11.869988333333,77.461506666667
+Karnataka,Mandya,Mandya,Tharanigere,1046811,primary school,tharanigere,Education ,High School - General,12.68877969,76.84603783
+Karnataka,Bangalore U,Bangalore(S),Kumbalgodu,596969,Bank,"Kumbalgodu, Mysore road",Transport/Admin,Bank,12.87848901,77.44560644
+Karnataka,Koppal,Gangavathi,Emmegudda,324766,murarji desai residence school,hemagudda,Education ,High School - General,15.43258288,76.40444658
+Karnataka,Mandya,Mandya,Ummadahalli,1073271,PACS,ummadahalli,Transport/Admin,Bank,12.563706666667,76.931343333333
+Karnataka,Dakshina Kannada,Sulya,Yenmoor,1110723,private,Bharat petroleum ninthikalku,Transport/Admin,Fuel Station,12.67899891,75.42347519
+Karnataka,Uttara Kannada,Yellapura,Madnoor,642192,Wearhous madanoor,Wearhous madanoor,Agro ,Warehouse,15.03359931,74.85045674
+Karnataka,Haveri,Haveri,Negalur,776527,stock yard,at negalur,Agro ,Warehouse,14.892593482509,75.60634592548
+Karnataka,Tumkur,Pavagada,Tumakunte,1065357,Bus stand,Tumakunte,Transport/Admin,Bus Stand,14.07691338,77.059762
+Karnataka,Mysore,Mysore,Siddaramana hundi,988543,bank,siddaramanahundi,Transport/Admin,Bank,12.215309999999,76.812915
+Karnataka,Mandya,Pandavapura,Menagra,698133,Govt higher secondry school,menagra,Education ,Higher Secondary School,12.606365,76.72053
+Karnataka,Shimoga,Bhadravathi,Arekere,45068,primary health center,Arekere,Medical ,Primary Health Centre,13.950728333333,75.76913
+Karnataka,Udupi,Kundapura,Mallarabettu,663254,Bank,Mallarabettu,Transport/Admin,Bank,13.647546666666,74.670994999999
+Karnataka,Kodagu,Virajpet,T Shettigeri,1024130,Mandi ,T Shettigeri,Agro ,Mandi (Notified),12.03349537,75.97280188
+Karnataka,Gadag,Gadag,Hulkoti,428147,Hulkoti ,Hulkoti ,Medical ,Veterinary Hospital,15.423238333333,75.544133333333
+Karnataka,Mandya,Mandya,Chandagalu,200732,veternary hospital ,CHANDAGALU  Dudda ,Medical ,Veterinary Hospital,12.54151,76.829806666667
+Karnataka,Ramnagar,Ramanagar,Ankanahalli-Kootgal,39843,Ankanahalli MPCS,Ankanahalli,Agro ,Collection Centre or Pack House,12.82990948,77.25067084
+Karnataka,Hassan,Holenarasipur,Doddakunche,305510,primary health center,doddakunche holenarsipur,Medical ,Primary Health Centre,12.86963189,76.26735446
+Karnataka,Mysore,Hunsur,Bharathavadi,139335,middle School,bharathavadi,Education ,Higher Secondary School,12.19159616,76.2084156
+Karnataka,Mysore,Krishnarajanagar,Kallimuddanahally,491638,Higher Secondary School,Kallimuddanahally,Education ,Higher Secondary School,12.57017744,76.28835091
+Karnataka,Chickmagalur,Tarikere,Javooru,458477,Bus Stop , Bus stop Javoor ,Transport/Admin,Bus Stand,13.78479136,75.98548233
+Karnataka,Bijapur,Bijapur,Somadevar hatti LT1,1003867,Bus stop,Bus stop somadevarhatti LT1,Transport/Admin,Bus Stand,16.91763552,75.53290181
+Karnataka,Shimoga,Thirthahalli,SHIRAGARU,982935,BUS STOP,SHIRAGARU,Transport/Admin,Bus Stand,13.801972554065,75.18585643731
+Karnataka,Chitradurga,Challakere,Hosahally,1340378,Revenue,Hosahally,Agro ,Is Part of Rurban Cluster?,14.44958731,76.66078528
+Karnataka,Bagalkot,Badami,Nandikeshwar,756920,veterinary ,in village ,Medical ,Veterinary Hospital,15.948106558062,75.757597619667
+Karnataka,Bidar,Aurad,Sangam,948811,Canada Bank,Sangam,Transport/Admin,Bank,18.163871755823,77.252356912941
+Karnataka,Raichur,Deodurga,Chinchodi,224790,Govt high school,Govt High School Chinchodi,Education ,High School - General,16.3917922,76.72299708
+Karnataka,Gadag,Ron,Karamadi,510273,Bus stand,Karamadi,Transport/Admin,Bus Stand,15.77354864,75.58094219
+Karnataka,Hassan,Arakalgud,Honnavally,425407,HEMAVATHI HIGH SCHOOL AIDED HONNAVALLI,HEMAVATHI HIGH SCHOOL SH 8 HONNAVALLI,Education ,High School - General,12.768941666666,76.079415
+Karnataka,Mysore,Krishnarajanagar,Kamenahally,497157,Higher secondary school,kamenahalli,Education ,Higher Secondary School,12.455091666667,76.428
+Karnataka,Tumkur,C.N.Halli,Melanahalli,696770,milk collection centre melanahalli,milk collection centre melanahalli cn hally tq,Agro ,Collection Centre or Pack House,13.42069545,76.6034284
+Karnataka,Chitradurga,Hosadurga,Srirampura,1011034,APMC ,Srirampura ,Agro ,Mandi (Notified),13.61861224,76.42124508
+Karnataka,Haveri,Hangal,Shiragoda,982937,Dairy,At Shiragoda,Agro ,Collection Centre or Pack House,14.67579594,75.11292546
+Karnataka,Dakshina Kannada,Puttur,Mardala,680143,Mardala Gram Panchayath,"Mardala Gram Panchayath
+Puttur Tq",Transport/Admin,Panchayat Headquarter,12.7434023,75.5075786
+Karnataka,Dakshina Kannada,Bantwal,Manchi,667596,PHC Manchi,PHC Manchi village bantwal tq,Medical ,Primary Health Centre,12.8172282,75.02847517
+Karnataka,Chitradurga,Chitradurga,Chikkenahally,222708,collection centre ,main road ,Agro ,Collection Centre or Pack House,14.259882251964,76.216021487409
+Karnataka,Ramnagar,Ramanagar,Bidadi,160813,BMTC bus stand,Bidadi,Transport/Admin,Bus Stand,12.79740934,77.38494064
+Karnataka,Uttara Kannada,Siddapura,Bilgi,164088,bank,bilgi syndicate bank ,Transport/Admin,Bank,14.36014253,74.79560906
+Karnataka,Uttara Kannada,Honnavara,Kadatoka,478982,village accountant office kadatoka,kadatoka honnavar,Transport/Admin,Block Headquarter,14.37351396,74.45560018
+Karnataka,Hassan,Channarayapatna,Darasihalli,250289,private milk dairy,darasihalli channarayapatna,Agro ,Collection Centre or Pack House,12.904452490001,76.386835238971
+Karnataka,Dakshina Kannada,Puttur,Kabaka,475448,VSSS,Kabaka village,Agro ,Warehouse,12.78449266,75.1573844
+Karnataka,Chitradurga,Chitradurga,Kadabanakatte,477621,vetenery hospital ,main road Kadabanakatte,Medical ,Veterinary Hospital,14.43779933732,76.440827585757
+Karnataka,Chickballapur,Chinthamani,Konapalli,576455,food godown,kinapalli,Agro ,Warehouse,13.410600121133,78.022820362821
+Karnataka,Dakshina Kannada,Puttur,Thinagalady,1050692,Canara Bank Thingalady ,Canara Bank Thingalady Kedambady village ,Transport/Admin,Bank,12.704113333333,75.277066666667
+Karnataka,Mandya,Mandya,Hanakere,395456,PACS hanakere,hanakere,Transport/Admin,Bank,12.566816666667,76.979053333333
+Karnataka,Mysore,Heggadadevanakote,Saragur,954274,Higher Primary school,Saragur,Education ,Higher Secondary School,12.00352344,76.3938846
+Karnataka,Shimoga,Soraba,Induvalli,433894,education,induvalli,Education ,High School - General,14.30951431,75.19493391
+Karnataka,Mysore,Krishnarajanagar,Seegewalu,967673,Panchayath Head Quarters,Seegewalu,Transport/Admin,Panchayat Headquarter,12.595206666667,76.203673333333
+Karnataka,Chickballapur,Chinthamani,Iragampalli,434468,Bank,Iragampalli,Transport/Admin,Bank,13.537442510492,78.131223182959
+Karnataka,Belgaum,Athani,Madabhavi,636101,S G S High School ,Madabhavi ,Education ,High School - General,16.80022043,74.96030997
+Karnataka,Chickballapur,Chinthamani,Yerraigarihalli,1111153,Milk collection centre ,Yerraigarihalli,Agro ,Collection Centre or Pack House,13.51817319228,78.161963132116
+Karnataka,Belgaum,Soundatti,Sattigeri,964039,Bus stand,Sattigeri,Transport/Admin,Bus Stand,16.02922,75.041531666666
+Karnataka,Koppal,Yelburga,H.V.Kunta,390550,Government P U Collage ,Hirevakkalakunta,Education ,Higher Secondary School,15.63784718,76.22582944
+Karnataka,Mysore,Krishnarajanagar,beechanahallykoppalu,118291,Middle School,beechanahalli koppalu ,Education ,Higher Secondary School,12.53538698,76.34152865
+Karnataka,Belgaum,Soundatti,Harugoppa,414549,bus stand,harugoppa,Transport/Admin,Bus Stand,15.901491666667,74.879031666667
+Karnataka,Bijapur,Muddebihal,Basarkod,110552,Gram panchayat,in village,Transport/Admin,Panchayat Headquarter,16.3980096,76.07835354
+Karnataka,Mysore,Mysore,Yadakola,1105814,Higher primary school,Yadakola,Education ,Higher Secondary School,12.20175,76.819311666667
+Karnataka,Bangalore R,Devanahalli,Budigere,184393,vyavasaya  seva sahakara  Sangha niyamitha,Budigere,Agro ,Agro Industry,13.13365095,77.74708914
+Karnataka,Mysore,Krishnarajanagar,Voddarakoppalu,1340436,Higher Secondary School,Vaddarakoppalu,Education ,Higher Secondary School,12.562511666667,76.310625
+Karnataka,Bidar,Bidar,Chillargi,223537,corporation Bank,Chillargi ,Transport/Admin,Bank,17.994915428571,77.622378375381
+Karnataka,Chitradurga,Hiriyur,Imangala,431547,Imangala grama panchayat,Imangala main road,Transport/Admin,Panchayat Headquarter,14.09328458,76.53165037
+Karnataka,Uttara Kannada,Karwar,Madhewada,639491,Veterinary hospital,Halaga,Medical ,Veterinary Hospital,14.88708389,74.21966749
+Karnataka,Udupi,Udupi,Moodu Giliyaru J H C,714303,High School,Moodu Giliyaru J H C Giliyar,Education ,High School - General,13.52948698,74.72046098
+Karnataka,Belgaum,Hukkeri,Gavanal,351768,Bus stand,Gavanal,Transport/Admin,Bus Stand,16.24321974,74.51428512
+Karnataka,Davanagere,Honnali,Savalanga,964880,Primary Health Centre,Primary Health Centre Savalanga,Medical ,Primary Health Centre,14.10391256,75.5226517
+Karnataka,Raichur,Raichur,Rajalbunda,891049,Bus stand ,Rajalbunda ,Transport/Admin,Bus Stand,16.14534265,77.44351888
+Karnataka,Mandya,Mandya,Thaggahalli,1042451,KGB,Thaggahalli,Transport/Admin,Bank,12.481918333333,76.937221666666
+Karnataka,Ramnagar,Channapatna,Devaralli,263564,Devarahalli MCPS,Devarahalli,Agro ,Collection Centre or Pack House,12.65369096,77.15454336
+Karnataka,Mandya,Krishnarajapet,YALADAHALLI,1108909,KSRTC bus stand,Yalabahalli,Transport/Admin,Bus Stand,12.78476526,76.5207675
+Karnataka,Chitradurga,Chitradurga,MEDEHALLI,690960,Revenue,Main road,Agro ,GRaM (Notified),14.248960088007,76.392979240044
+Karnataka,Koppal,Yelburga,Mudhol,720364,bus stand,bus stand,Transport/Admin,Bus Stand,15.642491666667,75.950216666667
+Karnataka,Chickballapur,Chinthamani,Rayapalli,918393,milk collection centre,rayapalli,Agro ,Collection Centre or Pack House,13.414526623674,78.001211313531
+Karnataka,Belgaum,Hukkeri,Salamawadi,941015,baveshwari halasidda krishi vavasaya sangha,salamawadi,Transport/Admin,Bank,16.06707291,74.40384455
+Karnataka,Davanagere,Harihara,Kokkanur,572363,Grama Panchayat,Grama Panchayat Kokkanur,Transport/Admin,Panchayat Headquarter,14.38731318,75.68288859
+Karnataka,Shimoga,Shimoga,Shettihalli,981359,kmf,shettihalli punarvasathi,Agro ,Collection Centre or Pack House,13.931834650001,75.692088602717
+Karnataka,Chitradurga,Chitradurga,mallanakatte,663036,Higher Secondary School,in the Village,Education ,Higher Secondary School,14.24368108157,76.385210221633
+Karnataka,Shimoga,Shikaripur,Tadasanahalli,1024639,Ware house,Tadasanahalli,Agro ,Warehouse,14.43450103,75.33295348

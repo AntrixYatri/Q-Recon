@@ -40,46 +40,37 @@ print("LOG: [OK] All document classifications match expectations.")
 
 # CASE 5, 6, 7, 8, 9, 10: Multi-Document Mixed Integration Analysis
 print("\n--- MIXED MULTI-DOCUMENT PIPELINE INTEGRATION CHECK ---")
-mixed_docs = [
-    # Document 1: QCR (Structured bypass representing a QCR file payload)
-    {
-        "document_id": "QCR-VAL-01",
-        "document_type": "QCR",
-        "fields": {
-            "project_code": "PRJ-HACK-2026",
-            "road_name": "Karimnagar Bypass Road 6",
-            "measured_value": "150 mm",
-            "unit": "mm",
-            "quality_status": "COMPLIANT"
-        }
-    },
-    # Document 2: Structured Test Datasheet Bypass (Unit normalisation cm -> mm, measured value mismatch)
-    {
-        "document_id": "DS-VAL-01",
-        "document_type": "TEST_DATASHEET",
-        "fields": {
-            "project_code": "PRJ-HACK-2026",
-            "road_name": "Karimnagar Bypass Road 6",
-            "measured_value": "13 cm", # 130 mm (Numerical Mismatch OUTLIER!)
-            "unit": "cm"
-        }
-    },
-    # Document 3: Structured QM E-Form Bypass (Missing road_name field)
-    {
-        "document_id": "QM-VAL-01",
-        "document_type": "QM_EFORM",
-        "fields": {
-            "project_code": "PRJ-HACK-2026",
-            "measured_value": "150 mm",
-            "unit": "mm",
-            "quality_status": "COMPLIANT"
-        }
-    },
-    # Document 4: Raw file path that fails classification (UNKNOWN) -> should generate a warning but not crash the run
-    {
-        "path": "random_contractor_invoice.jpg"
-    }
-]
+# Sourced deterministically from PMGSY dataset
+from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record
+from ai_engine.testing.discrepancy_scenario_factory import create_scenario
+
+base_rec = create_pmgsy_grounded_base_record(20, seed=42)
+document_inputs = create_scenario(base_rec, "numerical_mismatch")
+
+# Modify Test Datasheet to have 13 cm (130 mm) for the specific verification assertion
+if len(document_inputs) >= 2:
+    document_inputs[1]["fields"]["measured_value"] = "13"
+    document_inputs[1]["fields"]["unit"] = "cm"
+
+# Modify QM E-Form to delete road_name field
+if len(document_inputs) >= 3:
+    if "road_name" in document_inputs[2]["fields"]:
+        del document_inputs[2]["fields"]["road_name"]
+
+# Add the raw file path that fails classification (UNKNOWN)
+mixed_docs = document_inputs + [{"path": "random_contractor_invoice.jpg"}]
+
+# Log dataset provenance
+print("\n" + "="*60)
+print("DATA SOURCE VERIFICATION")
+print("="*60)
+prov = base_rec["provenance"]
+print(f"Data Origin:         {prov['data_origin']}")
+print(f"Source Dataset:      {prov['source_dataset']}")
+print(f"Source Row Index:    {prov['source_row_index']}")
+print(f"Synthetic Record ID: {prov['synthetic_record_id']}")
+print(f"Generator:           {prov['generator']}")
+print("="*60 + "\n")
 
 try:
     results = analyze_documents(mixed_docs)

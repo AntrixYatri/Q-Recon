@@ -151,51 +151,45 @@ def compare_documents(analysis_id: str) -> dict:
 def get_demo_canonical_dataset() -> list:
     """
     Returns a rich, linked canonical dataset used for demo / testing.
-    Includes:
-      - QCR (document_id: DEMO-QCR-01)
-      - Test Datasheet (document_id: DEMO-TEST-01)
-      - QM E-Form (document_id: DEMO-QM-01)
+    Uses the PMGSY grounded fixture factory to build these records deterministically.
     """
-    # 1. QCR
-    rec_qcr = CanonicalRecord()
-    rec_qcr.set_field("document_id", "DEMO-QCR-01", "QCR", "document_id")
-    rec_qcr.set_field("document_type", "QCR", "QCR", "document_type")
-    rec_qcr.set_field("project_code", "PRJ-2026-X1", "QCR", "project_code")
-    rec_qcr.set_field("road_name", "Belagavi Rural Highway", "QCR", "road_name", 0.94)
-    rec_qcr.set_field("district", "Belagavi", "QCR", "district", 0.95)
-    rec_qcr.set_field("inspection_date", "2026-08-12", "QCR", "inspection_date", 0.92)
-    rec_qcr.set_field("parameter", "Pavement Thickness", "QCR", "parameter")
-    rec_qcr.set_field("required_value", "150", "QCR", "required_value")
-    rec_qcr.set_field("measured_value", "150", "QCR", "measured_value") # 150 mm
-    rec_qcr.set_field("unit", "mm", "QCR", "unit")
-    rec_qcr.set_field("quality_status", "COMPLIANT", "QCR", "quality_status")
-
-    # 2. Test Datasheet
-    rec_test = CanonicalRecord()
-    rec_test.set_field("document_id", "DEMO-TEST-01", "TEST_DATASHEET", "document_id")
-    rec_test.set_field("document_type", "TEST_DATASHEET", "TEST_DATASHEET", "document_type")
-    rec_test.set_field("project_code", "PRJ-2026-X1", "TEST_DATASHEET", "project_code")
-    # Equivalent unit: '15 cm' -> 150 mm after unit normalization
-    rec_test.set_field("road_name", "Belagavi Rural Highway", "TEST_DATASHEET", "road_name")
-    rec_test.set_field("district", "belagavi", "TEST_DATASHEET", "district") # casing diff only
-    rec_test.set_field("inspection_date", "2026-08-12", "TEST_DATASHEET", "inspection_date")
-    rec_test.set_field("parameter", "Pavement Thickness", "TEST_DATASHEET", "parameter")
-    rec_test.set_field("required_value", "15", "TEST_DATASHEET", "required_value")
-    rec_test.set_field("measured_value", "12", "TEST_DATASHEET", "measured_value") # 12 cm = 120 mm (Numerical Mismatch!)
-    rec_test.set_field("unit", "cm", "TEST_DATASHEET", "unit")
-    rec_test.set_field("quality_status", "NON-COMPLIANT", "TEST_DATASHEET", "quality_status")
-
-    # 3. QM E-Form
-    rec_qm = CanonicalRecord()
-    rec_qm.set_field("document_id", "DEMO-QM-01", "QM_EFORM", "document_id")
-    rec_qm.set_field("document_type", "QM_EFORM", "QM_EFORM", "document_type")
-    rec_qm.set_field("project_code", "PRJ-2026-X1", "QM_EFORM", "project_code")
-    rec_qm.set_field("road_name", "Belagavi Rural Highway", "QM_EFORM", "road_name")
-    rec_qm.set_field("district", "Belagavi", "QM_EFORM", "district")
-    rec_qm.set_field("inspection_date", "2026-08-12", "QM_EFORM", "inspection_date")
-    # Parameter is missing (Missing value check)
-    rec_qm.set_field("measured_value", "150", "QM_EFORM", "measured_value")
-    rec_qm.set_field("unit", "mm", "QM_EFORM", "unit")
-    rec_qm.set_field("quality_status", "COMPLIANT", "QM_EFORM", "quality_status")
-
-    return [rec_qcr, rec_test, rec_qm]
+    from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record, generate_document_variants
+    from ai_engine.data_integration.unified_data_builder import build_canonical_record
+    
+    # 1. Generate base record from PMGSY dataset row 0
+    base_rec = create_pmgsy_grounded_base_record(0, seed=42)
+    
+    # Ensure standard values
+    base_rec["measured_value"] = "150"
+    base_rec["unit"] = "mm"
+    base_rec["parameter"] = "Pavement Thickness"
+    base_rec["required_value"] = "150"
+    base_rec["quality_status"] = "COMPLIANT"
+    
+    # 2. Get document variants
+    variants = generate_document_variants(base_rec)
+    
+    qcr_var = variants["QCR"]
+    td_var = variants["TEST_DATASHEET"]
+    qm_var = variants["QM_EFORM"]
+    
+    # Modify QCR document ID to match legacy
+    qcr_var["document_id"] = "DEMO-QCR-01"
+    
+    # Modify Test Datasheet to have equivalent unit but numerical mismatch
+    td_var["document_id"] = "DEMO-TEST-01"
+    td_var["fields"]["measured_value"] = "12"
+    td_var["fields"]["unit"] = "cm"
+    td_var["fields"]["required_value"] = "15" # 15 cm = 150 mm
+    
+    # Modify QM E-Form to have missing parameter
+    qm_var["document_id"] = "DEMO-QM-01"
+    if "parameter" in qm_var["fields"]:
+        del qm_var["fields"]["parameter"]
+        
+    # Build CanonicalRecords
+    rec_qcr = build_canonical_record(qcr_var["document_id"], "QCR", qcr_var["fields"], {"provenance": qcr_var["provenance"]})
+    rec_td = build_canonical_record(td_var["document_id"], "TEST_DATASHEET", td_var["fields"], {"provenance": td_var["provenance"]})
+    rec_qm = build_canonical_record(qm_var["document_id"], "QM_EFORM", qm_var["fields"], {"provenance": qm_var["provenance"]})
+    
+    return [rec_qcr, rec_td, rec_qm]

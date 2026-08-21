@@ -18,20 +18,34 @@ except Exception as e:
     print(f"LOG: [FAIL] Imports failed: {str(e)}")
     sys.exit(1)
 
+# Sourced deterministically from PMGSY dataset
+from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record
+from ai_engine.testing.discrepancy_scenario_factory import create_scenario
+
 # Case A: 3-document majority consensus
-# 2 docs agree on 150 mm, 1 doc says 120 mm. Consensus = 150 mm, outlier = 120 mm
-docs_majority = [
-    {"document_id": "QCR-01", "document_type": "QCR", "fields": {"project_code": "P-MAJ", "road": "Highway 1", "measured_value": "150 mm"}},
-    {"document_id": "TEST-01", "document_type": "TEST_DATASHEET", "fields": {"project_code": "P-MAJ", "road": "Highway 1", "measured_value": "120 mm"}},
-    {"document_id": "QM-01", "document_type": "QM_EFORM", "fields": {"project_code": "P-MAJ", "road": "Highway 1", "measured_value": "15 cm"}} # equivalent 150 mm
-]
+base_maj = create_pmgsy_grounded_base_record(10, seed=42)
+docs_majority = create_scenario(base_maj, "majority_consensus")
 
 # Case B: 2-document tie handling (1 vs 1)
-# 1 doc says 2026-08-12, 1 doc says 2026-08-19. No authority configured. Should be ambiguous conflict
-docs_tie = [
-    {"document_id": "QCR-02", "document_type": "QCR", "fields": {"project_code": "P-TIE", "road": "Highway 2", "inspection_date": "12 Aug 2026"}},
-    {"document_id": "TEST-02", "document_type": "TEST_DATASHEET", "fields": {"project_code": "P-TIE", "road": "Highway 2", "inspection_date": "19 Aug 2026"}}
-]
+base_tie = create_pmgsy_grounded_base_record(12, seed=42)
+docs_tie = create_scenario(base_tie, "ambiguous_conflict")
+# Modify to create a date tie mismatch and make measured_values identical to avoid other conflicts
+docs_tie[0]["fields"]["inspection_date"] = "12 Aug 2026"
+docs_tie[1]["fields"]["inspection_date"] = "19 Aug 2026"
+docs_tie[0]["fields"]["measured_value"] = "150"
+docs_tie[1]["fields"]["measured_value"] = "150"
+
+# Log dataset provenance
+print("\n" + "="*60)
+print("DATA SOURCE VERIFICATION")
+print("="*60)
+prov = base_maj["provenance"]
+print(f"Data Origin:         {prov['data_origin']}")
+print(f"Source Dataset:      {prov['source_dataset']}")
+print(f"Source Row Index:    {prov['source_row_index']}")
+print(f"Synthetic Record ID: {prov['synthetic_record_id']}")
+print(f"Generator:           {prov['generator']}")
+print("="*60 + "\n")
 
 # 1. Run Case A
 try:

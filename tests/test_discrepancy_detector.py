@@ -12,34 +12,32 @@ from ai_engine.discrepancy_engine.discrepancy_detector import detect_discrepanci
 class TestDiscrepancyDetector(unittest.TestCase):
     def test_identical_records_zero_discrepancies(self):
         # Case 1: Identical documents -> 0 discrepancies
-        rec_a = CanonicalRecord()
-        rec_a.set_field("project_code", "PRJ-101", "QCR", "project_code")
-        rec_a.set_field("road_name", "Route A", "QCR", "road_name")
-        rec_a.set_field("measured_value", "150", "QCR", "measured_value")
-        rec_a.set_field("unit", "mm", "QCR", "unit")
-
-        rec_b = CanonicalRecord()
-        rec_b.set_field("project_code", "PRJ-101", "TEST_DATASHEET", "project_code")
-        rec_b.set_field("road_name", "Route A", "TEST_DATASHEET", "road")
-        rec_b.set_field("measured_value", "150", "TEST_DATASHEET", "measured_value")
-        rec_b.set_field("unit", "mm", "TEST_DATASHEET", "unit")
+        from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record, generate_document_variants
+        from ai_engine.data_integration.unified_data_builder import build_canonical_record
+        
+        base_record = create_pmgsy_grounded_base_record(3, seed=42)
+        variants = generate_document_variants(base_record)
+        
+        rec_a = build_canonical_record(variants["QCR"]["document_id"], "QCR", variants["QCR"]["fields"])
+        rec_b = build_canonical_record(variants["TEST_DATASHEET"]["document_id"], "TEST_DATASHEET", variants["TEST_DATASHEET"]["fields"])
 
         discrepancies = detect_discrepancies([rec_a, rec_b])
         self.assertEqual(len(discrepancies), 0)
 
     def test_numerical_mismatch(self):
         # Case 4: Numerical mismatch -> 1 numerical mismatch
-        rec_a = CanonicalRecord()
-        rec_a.set_field("project_code", "PRJ-101", "QCR", "project_code")
-        rec_a.set_field("road_name", "Route A", "QCR", "road_name")
-        rec_a.set_field("measured_value", "150", "QCR", "measured_value")
-        rec_a.set_field("unit", "mm", "QCR", "unit")
-
-        rec_b = CanonicalRecord()
-        rec_b.set_field("project_code", "PRJ-101", "TEST_DATASHEET", "project_code")
-        rec_b.set_field("road_name", "Route A", "TEST_DATASHEET", "road")
-        rec_b.set_field("measured_value", "120", "TEST_DATASHEET", "measured_value")
-        rec_b.set_field("unit", "mm", "TEST_DATASHEET", "unit")
+        from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record, generate_document_variants
+        from ai_engine.data_integration.unified_data_builder import build_canonical_record
+        
+        base_record = create_pmgsy_grounded_base_record(3, seed=42)
+        variants = generate_document_variants(base_record)
+        
+        # Mutate measured value to create discrepancy
+        variants["TEST_DATASHEET"]["fields"]["measured_value"] = "120"
+        variants["TEST_DATASHEET"]["fields"]["unit"] = "mm"
+        
+        rec_a = build_canonical_record(variants["QCR"]["document_id"], "QCR", variants["QCR"]["fields"])
+        rec_b = build_canonical_record(variants["TEST_DATASHEET"]["document_id"], "TEST_DATASHEET", variants["TEST_DATASHEET"]["fields"])
 
         discrepancies = detect_discrepancies([rec_a, rec_b])
         self.assertEqual(len(discrepancies), 1)

@@ -1,27 +1,33 @@
 {
   "analysis_id": "proj-101",
   "project": {
-    "road_name": "PMGSY - Karimnagar to Sultanabad Rural Link Route 4",
-    "package_id": "AP-04-102-R4",
-    "district": "Karimnagar",
-    "state": "Telangana"
+    "road_name": "PMGSY - Shedbal Govt Hospital Link Road (Grounded Synthetic)",
+    "package_id": "PRJ-PMGSY-2901002003",
+    "district": "Belagavi",
+    "state": "Karnataka",
+    "data_provenance": {
+      "data_origin": "pmgsy_grounded_synthetic",
+      "source_dataset": "pmgsy_karnataka_100.csv",
+      "source_row_index": 0,
+      "generator": "pmgsy_qcr_generator"
+    }
   },
   "processing_status": "success",
   "documents_analyzed": 3,
   "linked_record_groups": 1,
   "summary": {
     "documents_analyzed": 3,
-    "total_discrepancies": 6,
-    "critical": 1,
+    "total_discrepancies": 3,
+    "critical": 0,
     "high": 3,
-    "medium": 2,
+    "medium": 0,
     "low": 0,
-    "warning": 2,
+    "warning": 0,
     "minor": 0
   },
   "discrepancies": [
     {
-      "id": "61ccbca7-e0fc-4b55-a452-e28b62259cd1",
+      "id": "7d9d07a6-a015-4d67-8a28-8cd080fcc66b",
       "field": "measured_value",
       "discrepancy_type": "numerical_mismatch",
       "documents": [
@@ -42,24 +48,24 @@
         {
           "document_id": "DEMO-TEST-01",
           "document_type": "TEST_DATASHEET",
-          "value": "12",
-          "normalized_value": "12",
+          "value": "120",
+          "normalized_value": "120",
           "ocr_confidence": null
         }
       ],
       "values": [
         "150",
         "150",
-        "12"
+        "120"
       ],
       "normalized_values": [
         "150",
         "150",
-        "12"
+        "120"
       ],
       "comparison_status": "mismatch",
-      "difference": 138.0,
-      "percentage_difference": 1150.0,
+      "difference": 30.0,
+      "percentage_difference": 25.0,
       "severity": "high",
       "severity_reasons": [
         "Discrepancy affects structural test measurements.",
@@ -71,7 +77,7 @@
         "record_link_confidence": 0.95,
         "normalization_success": true
       },
-      "explanation": "Numerical mismatch on 'measured_value': TEST_DATASHEET (DEMO-TEST-01) reports '12', which differs from the consensus value '150' found in QCR (DEMO-QCR-01), QM_EFORM (DEMO-QM-01) by 138.0 (1150.0% difference).",
+      "explanation": "Numerical mismatch on 'measured_value': TEST_DATASHEET (DEMO-TEST-01) reports '120', which differs from the consensus value '150' found in QCR (DEMO-QCR-01), QM_EFORM (DEMO-QM-01) by 30.0 (25.0% difference).",
       "metadata": {
         "consensus_found": true,
         "consensus_value": "150"
@@ -82,98 +88,7 @@
       "value_b": "150"
     },
     {
-      "id": "65e5de73-401b-460d-9fee-cb6a89f31a1b",
-      "field": "required_value",
-      "discrepancy_type": "missing_value",
-      "documents": [
-        {
-          "document_id": "DEMO-QM-01",
-          "document_type": "QM_EFORM",
-          "value": null,
-          "normalized_value": null,
-          "ocr_confidence": null
-        }
-      ],
-      "values": [
-        null
-      ],
-      "normalized_values": [
-        null
-      ],
-      "comparison_status": "missing",
-      "difference": null,
-      "percentage_difference": null,
-      "severity": "high",
-      "severity_reasons": [
-        "Critical road safety or audit field is missing in one or more records."
-      ],
-      "confidence": 0.95,
-      "confidence_factors": {
-        "ocr_confidence": 1.0,
-        "record_link_confidence": 0.95,
-        "normalization_success": true
-      },
-      "explanation": "Required field 'required_value' is missing in QM_EFORM (DEMO-QM-01), but is populated in other linked documents.",
-      "metadata": {},
-      "document_a": "QM_EFORM (DEMO-QM-01)",
-      "document_b": "Not Specified",
-      "value_a": "",
-      "value_b": "N/A"
-    },
-    {
-      "id": "03999e5d-67fc-4974-8810-0b157e4c791a",
-      "field": "required_value",
-      "discrepancy_type": "numerical_mismatch",
-      "documents": [
-        {
-          "document_id": "DEMO-QCR-01",
-          "document_type": "QCR",
-          "value": "150",
-          "normalized_value": "150",
-          "ocr_confidence": null
-        },
-        {
-          "document_id": "DEMO-TEST-01",
-          "document_type": "TEST_DATASHEET",
-          "value": "15",
-          "normalized_value": "15",
-          "ocr_confidence": null
-        }
-      ],
-      "values": [
-        "150",
-        "15"
-      ],
-      "normalized_values": [
-        "150",
-        "15"
-      ],
-      "comparison_status": "mismatch",
-      "difference": 135.0,
-      "percentage_difference": 900.0,
-      "severity": "critical",
-      "severity_reasons": [
-        "Discrepancy affects structural test measurements.",
-        "Significant parameter deviation detected (90.0% error is > 15% limit)."
-      ],
-      "confidence": 0.95,
-      "confidence_factors": {
-        "ocr_confidence": 1.0,
-        "record_link_confidence": 0.95,
-        "normalization_success": true
-      },
-      "explanation": "Numerical mismatch on 'required_value': TEST_DATASHEET (DEMO-TEST-01) reports '15', which differs from the consensus value '150' found in QCR (DEMO-QCR-01) by 135.0 (900.0% difference).",
-      "metadata": {
-        "consensus_found": true,
-        "consensus_value": "150"
-      },
-      "document_a": "QCR (DEMO-QCR-01)",
-      "document_b": "TEST_DATASHEET (DEMO-TEST-01)",
-      "value_a": "150",
-      "value_b": "15"
-    },
-    {
-      "id": "cd837585-6996-4b88-a81d-da9657498e59",
+      "id": "620b9849-7c8c-4509-8fb4-10fa2d9ebcde",
       "field": "parameter",
       "discrepancy_type": "missing_value",
       "documents": [
@@ -212,108 +127,26 @@
       "value_b": "N/A"
     },
     {
-      "id": "67fa4b76-ce94-4869-a38e-377b74ee454f",
-      "field": "unit",
-      "discrepancy_type": "text_mismatch",
-      "documents": [
-        {
-          "document_id": "DEMO-QCR-01",
-          "document_type": "QCR",
-          "value": "mm",
-          "normalized_value": "mm",
-          "ocr_confidence": null
-        },
-        {
-          "document_id": "DEMO-QM-01",
-          "document_type": "QM_EFORM",
-          "value": "mm",
-          "normalized_value": "mm",
-          "ocr_confidence": null
-        },
-        {
-          "document_id": "DEMO-TEST-01",
-          "document_type": "TEST_DATASHEET",
-          "value": "cm",
-          "normalized_value": "cm",
-          "ocr_confidence": null
-        }
-      ],
-      "values": [
-        "mm",
-        "mm",
-        "cm"
-      ],
-      "normalized_values": [
-        "mm",
-        "mm",
-        "cm"
-      ],
-      "comparison_status": "mismatch",
-      "difference": null,
-      "percentage_difference": null,
-      "severity": "medium",
-      "severity_reasons": [
-        "Standard field mismatch of medium importance."
-      ],
-      "confidence": 0.95,
-      "confidence_factors": {
-        "ocr_confidence": 1.0,
-        "record_link_confidence": 0.95,
-        "normalization_success": true
-      },
-      "explanation": "Text mismatch on 'unit': TEST_DATASHEET (DEMO-TEST-01) reports 'cm', which disagrees with the consensus value 'mm' found in QCR (DEMO-QCR-01), QM_EFORM (DEMO-QM-01).",
-      "metadata": {
-        "consensus_found": true,
-        "consensus_value": "mm"
-      },
-      "document_a": "QCR (DEMO-QCR-01)",
-      "document_b": "QM_EFORM (DEMO-QM-01)",
-      "value_a": "mm",
-      "value_b": "mm"
-    },
-    {
-      "id": "38bd77c6-ca70-463b-ac55-f935d5263e16",
+      "id": "48038d28-a559-4473-b878-46d6663a158c",
       "field": "quality_status",
-      "discrepancy_type": "text_mismatch",
+      "discrepancy_type": "logical_inconsistency",
       "documents": [
-        {
-          "document_id": "DEMO-QCR-01",
-          "document_type": "QCR",
-          "value": "COMPLIANT",
-          "normalized_value": "COMPLIANT",
-          "ocr_confidence": null
-        },
-        {
-          "document_id": "DEMO-QM-01",
-          "document_type": "QM_EFORM",
-          "value": "COMPLIANT",
-          "normalized_value": "COMPLIANT",
-          "ocr_confidence": null
-        },
         {
           "document_id": "DEMO-TEST-01",
           "document_type": "TEST_DATASHEET",
-          "value": "NON-COMPLIANT",
-          "normalized_value": "NON-COMPLIANT",
+          "value": "COMPLIANT",
+          "normalized_value": null,
           "ocr_confidence": null
         }
       ],
-      "values": [
-        "COMPLIANT",
-        "COMPLIANT",
-        "NON-COMPLIANT"
-      ],
-      "normalized_values": [
-        "COMPLIANT",
-        "COMPLIANT",
-        "NON-COMPLIANT"
-      ],
+      "values": [],
+      "normalized_values": [],
       "comparison_status": "mismatch",
       "difference": null,
       "percentage_difference": null,
-      "severity": "medium",
+      "severity": "high",
       "severity_reasons": [
-        "Important descriptive field 'quality_status' disagrees across records."
+        "Logical conflict: Record declarations violate internal compliance rules."
       ],
       "confidence": 0.95,
       "confidence_factors": {
@@ -321,20 +154,17 @@
         "record_link_confidence": 0.95,
         "normalization_success": true
       },
-      "explanation": "Text mismatch on 'quality_status': TEST_DATASHEET (DEMO-TEST-01) reports 'NON-COMPLIANT', which disagrees with the consensus value 'COMPLIANT' found in QCR (DEMO-QCR-01), QM_EFORM (DEMO-QM-01).",
-      "metadata": {
-        "consensus_found": true,
-        "consensus_value": "COMPLIANT"
-      },
-      "document_a": "QCR (DEMO-QCR-01)",
-      "document_b": "QM_EFORM (DEMO-QM-01)",
+      "explanation": "Logical conflict: Record reports status as COMPLIANT, but measured value (120) is less than required value (150).",
+      "metadata": {},
+      "document_a": "TEST_DATASHEET (DEMO-TEST-01)",
+      "document_b": "Not Specified",
       "value_a": "COMPLIANT",
-      "value_b": "COMPLIANT"
+      "value_b": "N/A"
     }
   ],
   "record_groups": [
     {
-      "group_id": "PROJECT-PRJ-2026-X1",
+      "group_id": "PROJECT-PRJ-PMGSY-1105742",
       "documents": [
         {
           "document_id": "DEMO-QCR-01",
@@ -351,7 +181,7 @@
       ],
       "discrepancies": [
         {
-          "id": "61ccbca7-e0fc-4b55-a452-e28b62259cd1",
+          "id": "7d9d07a6-a015-4d67-8a28-8cd080fcc66b",
           "field": "measured_value",
           "discrepancy_type": "numerical_mismatch",
           "documents": [
@@ -372,24 +202,24 @@
             {
               "document_id": "DEMO-TEST-01",
               "document_type": "TEST_DATASHEET",
-              "value": "12",
-              "normalized_value": "12",
+              "value": "120",
+              "normalized_value": "120",
               "ocr_confidence": null
             }
           ],
           "values": [
             "150",
             "150",
-            "12"
+            "120"
           ],
           "normalized_values": [
             "150",
             "150",
-            "12"
+            "120"
           ],
           "comparison_status": "mismatch",
-          "difference": 138.0,
-          "percentage_difference": 1150.0,
+          "difference": 30.0,
+          "percentage_difference": 25.0,
           "severity": "high",
           "severity_reasons": [
             "Discrepancy affects structural test measurements.",
@@ -401,7 +231,7 @@
             "record_link_confidence": 0.95,
             "normalization_success": true
           },
-          "explanation": "Numerical mismatch on 'measured_value': TEST_DATASHEET (DEMO-TEST-01) reports '12', which differs from the consensus value '150' found in QCR (DEMO-QCR-01), QM_EFORM (DEMO-QM-01) by 138.0 (1150.0% difference).",
+          "explanation": "Numerical mismatch on 'measured_value': TEST_DATASHEET (DEMO-TEST-01) reports '120', which differs from the consensus value '150' found in QCR (DEMO-QCR-01), QM_EFORM (DEMO-QM-01) by 30.0 (25.0% difference).",
           "metadata": {
             "consensus_found": true,
             "consensus_value": "150"
@@ -412,98 +242,7 @@
           "value_b": "150"
         },
         {
-          "id": "65e5de73-401b-460d-9fee-cb6a89f31a1b",
-          "field": "required_value",
-          "discrepancy_type": "missing_value",
-          "documents": [
-            {
-              "document_id": "DEMO-QM-01",
-              "document_type": "QM_EFORM",
-              "value": null,
-              "normalized_value": null,
-              "ocr_confidence": null
-            }
-          ],
-          "values": [
-            null
-          ],
-          "normalized_values": [
-            null
-          ],
-          "comparison_status": "missing",
-          "difference": null,
-          "percentage_difference": null,
-          "severity": "high",
-          "severity_reasons": [
-            "Critical road safety or audit field is missing in one or more records."
-          ],
-          "confidence": 0.95,
-          "confidence_factors": {
-            "ocr_confidence": 1.0,
-            "record_link_confidence": 0.95,
-            "normalization_success": true
-          },
-          "explanation": "Required field 'required_value' is missing in QM_EFORM (DEMO-QM-01), but is populated in other linked documents.",
-          "metadata": {},
-          "document_a": "QM_EFORM (DEMO-QM-01)",
-          "document_b": "Not Specified",
-          "value_a": "",
-          "value_b": "N/A"
-        },
-        {
-          "id": "03999e5d-67fc-4974-8810-0b157e4c791a",
-          "field": "required_value",
-          "discrepancy_type": "numerical_mismatch",
-          "documents": [
-            {
-              "document_id": "DEMO-QCR-01",
-              "document_type": "QCR",
-              "value": "150",
-              "normalized_value": "150",
-              "ocr_confidence": null
-            },
-            {
-              "document_id": "DEMO-TEST-01",
-              "document_type": "TEST_DATASHEET",
-              "value": "15",
-              "normalized_value": "15",
-              "ocr_confidence": null
-            }
-          ],
-          "values": [
-            "150",
-            "15"
-          ],
-          "normalized_values": [
-            "150",
-            "15"
-          ],
-          "comparison_status": "mismatch",
-          "difference": 135.0,
-          "percentage_difference": 900.0,
-          "severity": "critical",
-          "severity_reasons": [
-            "Discrepancy affects structural test measurements.",
-            "Significant parameter deviation detected (90.0% error is > 15% limit)."
-          ],
-          "confidence": 0.95,
-          "confidence_factors": {
-            "ocr_confidence": 1.0,
-            "record_link_confidence": 0.95,
-            "normalization_success": true
-          },
-          "explanation": "Numerical mismatch on 'required_value': TEST_DATASHEET (DEMO-TEST-01) reports '15', which differs from the consensus value '150' found in QCR (DEMO-QCR-01) by 135.0 (900.0% difference).",
-          "metadata": {
-            "consensus_found": true,
-            "consensus_value": "150"
-          },
-          "document_a": "QCR (DEMO-QCR-01)",
-          "document_b": "TEST_DATASHEET (DEMO-TEST-01)",
-          "value_a": "150",
-          "value_b": "15"
-        },
-        {
-          "id": "cd837585-6996-4b88-a81d-da9657498e59",
+          "id": "620b9849-7c8c-4509-8fb4-10fa2d9ebcde",
           "field": "parameter",
           "discrepancy_type": "missing_value",
           "documents": [
@@ -542,108 +281,26 @@
           "value_b": "N/A"
         },
         {
-          "id": "67fa4b76-ce94-4869-a38e-377b74ee454f",
-          "field": "unit",
-          "discrepancy_type": "text_mismatch",
-          "documents": [
-            {
-              "document_id": "DEMO-QCR-01",
-              "document_type": "QCR",
-              "value": "mm",
-              "normalized_value": "mm",
-              "ocr_confidence": null
-            },
-            {
-              "document_id": "DEMO-QM-01",
-              "document_type": "QM_EFORM",
-              "value": "mm",
-              "normalized_value": "mm",
-              "ocr_confidence": null
-            },
-            {
-              "document_id": "DEMO-TEST-01",
-              "document_type": "TEST_DATASHEET",
-              "value": "cm",
-              "normalized_value": "cm",
-              "ocr_confidence": null
-            }
-          ],
-          "values": [
-            "mm",
-            "mm",
-            "cm"
-          ],
-          "normalized_values": [
-            "mm",
-            "mm",
-            "cm"
-          ],
-          "comparison_status": "mismatch",
-          "difference": null,
-          "percentage_difference": null,
-          "severity": "medium",
-          "severity_reasons": [
-            "Standard field mismatch of medium importance."
-          ],
-          "confidence": 0.95,
-          "confidence_factors": {
-            "ocr_confidence": 1.0,
-            "record_link_confidence": 0.95,
-            "normalization_success": true
-          },
-          "explanation": "Text mismatch on 'unit': TEST_DATASHEET (DEMO-TEST-01) reports 'cm', which disagrees with the consensus value 'mm' found in QCR (DEMO-QCR-01), QM_EFORM (DEMO-QM-01).",
-          "metadata": {
-            "consensus_found": true,
-            "consensus_value": "mm"
-          },
-          "document_a": "QCR (DEMO-QCR-01)",
-          "document_b": "QM_EFORM (DEMO-QM-01)",
-          "value_a": "mm",
-          "value_b": "mm"
-        },
-        {
-          "id": "38bd77c6-ca70-463b-ac55-f935d5263e16",
+          "id": "48038d28-a559-4473-b878-46d6663a158c",
           "field": "quality_status",
-          "discrepancy_type": "text_mismatch",
+          "discrepancy_type": "logical_inconsistency",
           "documents": [
-            {
-              "document_id": "DEMO-QCR-01",
-              "document_type": "QCR",
-              "value": "COMPLIANT",
-              "normalized_value": "COMPLIANT",
-              "ocr_confidence": null
-            },
-            {
-              "document_id": "DEMO-QM-01",
-              "document_type": "QM_EFORM",
-              "value": "COMPLIANT",
-              "normalized_value": "COMPLIANT",
-              "ocr_confidence": null
-            },
             {
               "document_id": "DEMO-TEST-01",
               "document_type": "TEST_DATASHEET",
-              "value": "NON-COMPLIANT",
-              "normalized_value": "NON-COMPLIANT",
+              "value": "COMPLIANT",
+              "normalized_value": null,
               "ocr_confidence": null
             }
           ],
-          "values": [
-            "COMPLIANT",
-            "COMPLIANT",
-            "NON-COMPLIANT"
-          ],
-          "normalized_values": [
-            "COMPLIANT",
-            "COMPLIANT",
-            "NON-COMPLIANT"
-          ],
+          "values": [],
+          "normalized_values": [],
           "comparison_status": "mismatch",
           "difference": null,
           "percentage_difference": null,
-          "severity": "medium",
+          "severity": "high",
           "severity_reasons": [
-            "Important descriptive field 'quality_status' disagrees across records."
+            "Logical conflict: Record declarations violate internal compliance rules."
           ],
           "confidence": 0.95,
           "confidence_factors": {
@@ -651,15 +308,12 @@
             "record_link_confidence": 0.95,
             "normalization_success": true
           },
-          "explanation": "Text mismatch on 'quality_status': TEST_DATASHEET (DEMO-TEST-01) reports 'NON-COMPLIANT', which disagrees with the consensus value 'COMPLIANT' found in QCR (DEMO-QCR-01), QM_EFORM (DEMO-QM-01).",
-          "metadata": {
-            "consensus_found": true,
-            "consensus_value": "COMPLIANT"
-          },
-          "document_a": "QCR (DEMO-QCR-01)",
-          "document_b": "QM_EFORM (DEMO-QM-01)",
+          "explanation": "Logical conflict: Record reports status as COMPLIANT, but measured value (120) is less than required value (150).",
+          "metadata": {},
+          "document_a": "TEST_DATASHEET (DEMO-TEST-01)",
+          "document_b": "Not Specified",
           "value_a": "COMPLIANT",
-          "value_b": "COMPLIANT"
+          "value_b": "N/A"
         }
       ]
     }

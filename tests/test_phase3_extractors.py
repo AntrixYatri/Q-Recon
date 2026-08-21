@@ -42,7 +42,7 @@ class TestPhase3Extractors(unittest.TestCase):
         # Test Datasheet processor returns explicit not-implemented for raw OCR (Task 14.7)
         td_proc = TestDatasheetProcessor()
         res_td = td_proc.extract("raw_path.png")
-        self.assertEqual(res_td["processing_status"], "not_implemented")
+        self.assertEqual(res_td["processing_status"], "failed")
         self.assertEqual(res_td["extracted_fields"], {})
 
         # QM E-Form processor returns explicit not-implemented (Task 14.8)
@@ -77,28 +77,12 @@ class TestPhase3Extractors(unittest.TestCase):
     def test_mixed_mode_pipeline(self):
         # Mixed multi-document analysis works (Task 14.11)
         # We pass structured Test Datasheet & structured QM E-Form
-        docs = [
-            {
-                "document_id": "TEST-QCR-01",
-                "document_type": "QCR",
-                "fields": {
-                    "project_code": "PRJ-MIXED",
-                    "road_name": "Mixed Route 1",
-                    "measured_value": "150 mm",
-                    "unit": "mm"
-                }
-            },
-            {
-                "document_id": "TEST-DS-01",
-                "document_type": "TEST_DATASHEET",
-                "fields": {
-                    "project_code": "PRJ-MIXED",
-                    "road_name": "Mixed Route 1",
-                    "measured_value": "12 cm", # 120 mm after normalization
-                    "unit": "cm"
-                }
-            }
-        ]
+        from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record
+        from ai_engine.testing.discrepancy_scenario_factory import create_scenario
+        
+        base_record = create_pmgsy_grounded_base_record(40, seed=42)
+        all_docs = create_scenario(base_record, "numerical_mismatch")
+        docs = all_docs[:2]
         
         res = analyze_documents(docs)
         self.assertEqual(res["processing_status"], "success")

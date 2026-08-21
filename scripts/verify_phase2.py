@@ -18,58 +18,29 @@ except Exception as e:
     sys.exit(1)
 
 # Set up comprehensive demo files representing multi-doc discrepancies
-document_inputs = [
-    # Document 1: QCR
-    {
-        "document_id": "TEST-QCR-01",
-        "document_type": "QCR",
-        "fields": {
-            "project_code": "PRJ-KA-2026",
-            "road_name": "Shedbal govt Hospital Bypass Route 4",
-            "district": "Belagavi",
-            "block": "Athni",
-            "inspection_dt": "12 Aug 2026", # alias of inspection_date
-            "parameter": "Pavement Thickness",
-            "required_val": "150",          # alias of required_value
-            "measured_val": "150 mm",       # alias of measured_value with unit
-            "unit": "mm",
-            "quality_status": "COMPLIANT"
-        }
-    },
-    # Document 2: Test Datasheet (Equivalent Unit but Numerical Mismatch)
-    {
-        "document_id": "TEST-DS-01",
-        "document_type": "TEST_DATASHEET",
-        "fields": {
-            "project_code": "PRJ-KA-2026",
-            "road_name": "Shedbal Govt Hospital Bypass Route 4", # fuzzy text casing match
-            "district": "belagavi",
-            "block": "athni",
-            "inspection_date": "2026-08-12",
-            "parameter": "Pavement Thickness",
-            "required_val": "15 cm",         # equivalent required thickness (150 mm)
-            "measured_val": "12 cm",         # 12 cm = 120 mm (Numerical mismatch outlier!)
-            "unit": "cm"
-        }
-    },
-    # Document 3: QM E-Form (Missing field inspection_date)
-    {
-        "document_id": "TEST-QM-01",
-        "document_type": "QM_EFORM",
-        "fields": {
-            "project_code": "PRJ-KA-2026",
-            "road_name": "Shedbal govt Hospital Bypass Route 4",
-            "district": "Belagavi",
-            "block": "Athni",
-            # inspection_date is missing (Missing value check!)
-            "parameter": "Pavement Thickness",
-            "required_val": "150",
-            "measured_val": "150",
-            "unit": "mm",
-            "quality_status": "COMPLIANT"
-        }
-    }
-]
+from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record
+from ai_engine.testing.discrepancy_scenario_factory import create_scenario
+
+# Sourced deterministically from PMGSY dataset
+base_record = create_pmgsy_grounded_base_record(5, seed=42)
+document_inputs = create_scenario(base_record, "numerical_mismatch")
+
+# Introduce missing inspection_date field mutation to trigger both test cases
+if len(document_inputs) >= 3:
+    if "inspection_date" in document_inputs[2]["fields"]:
+        del document_inputs[2]["fields"]["inspection_date"]
+
+# Log dataset provenance (Step 10 requirement)
+print("\n" + "="*60)
+print("DATA SOURCE VERIFICATION")
+print("="*60)
+prov = base_record["provenance"]
+print(f"Data Origin:         {prov['data_origin']}")
+print(f"Source Dataset:      {prov['source_dataset']}")
+print(f"Source Row Index:    {prov['source_row_index']}")
+print(f"Synthetic Record ID: {prov['synthetic_record_id']}")
+print(f"Generator:           {prov['generator']}")
+print("="*60 + "\n")
 
 # Run analysis
 try:

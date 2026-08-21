@@ -100,10 +100,16 @@ class AnalysisService:
                 })
 
             project_details = {
-                "road_name": "PMGSY - Karimnagar to Sultanabad Rural Link Route 4",
-                "package_id": "AP-04-102-R4",
-                "district": "Karimnagar",
-                "state": "Telangana"
+                "road_name": "PMGSY - Shedbal Govt Hospital Link Road (Grounded Synthetic)",
+                "package_id": "PRJ-PMGSY-2901002003",
+                "district": "Belagavi",
+                "state": "Karnataka",
+                "data_provenance": {
+                    "data_origin": "pmgsy_grounded_synthetic",
+                    "source_dataset": "pmgsy_karnataka_100.csv",
+                    "source_row_index": 0,
+                    "generator": "pmgsy_qcr_generator"
+                }
             }
 
             # Group discrepancies into record groups (Task 7)
@@ -166,10 +172,16 @@ class AnalysisService:
             return {
                 "analysis_id": analysis_id,
                 "project": {
-                    "road_name": "PMGSY - Karimnagar to Sultanabad Rural Link Route 4",
-                    "package_id": "AP-04-102-R4",
-                    "district": "Karimnagar",
-                    "state": "Telangana"
+                    "road_name": "PMGSY - Shedbal Govt Hospital Link Road (Grounded Synthetic)",
+                    "package_id": "PRJ-PMGSY-2901002003",
+                    "district": "Belagavi",
+                    "state": "Karnataka",
+                    "data_provenance": {
+                        "data_origin": "pmgsy_grounded_synthetic",
+                        "source_dataset": "pmgsy_karnataka_100.csv",
+                        "source_row_index": 0,
+                        "generator": "pmgsy_qcr_generator"
+                    }
                 },
                 "processing_status": "failed",
                 "documents_analyzed": 0,

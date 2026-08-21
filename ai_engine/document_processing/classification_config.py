@@ -25,6 +25,10 @@ CLASSIFICATION_CONFIG = {
             "test result": 0.4,
             "material test": 0.4,
             "laboratory": 0.3,
+            "laboratory test report": 0.6,
+            "test report": 0.4,
+            "required": 0.2,
+            "measured": 0.2,
             "core diameter": 0.2,
             "compressive strength": 0.2
         },

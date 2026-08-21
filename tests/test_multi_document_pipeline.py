@@ -11,38 +11,11 @@ from ai_engine.pipeline import analyze_documents
 class TestMultiDocumentPipeline(unittest.TestCase):
     def test_multi_document_pipeline_workflow(self):
         # Case 8: Three-document disagreement (consensus checking)
-        document_inputs = [
-            {
-                "document_id": "QCR-001",
-                "document_type": "QCR",
-                "fields": {
-                    "project_code": "PRJ-2026-T3",
-                    "road_name": "Karimnagar Bypass",
-                    "measured_val": "150 mm", # aliases will be normalized
-                    "unit": "mm"
-                }
-            },
-            {
-                "document_id": "TEST-001",
-                "document_type": "TEST_DATASHEET",
-                "fields": {
-                    "project_code": "PRJ-2026-T3",
-                    "road_name": "Karimnagar Bypass",
-                    "measured_val": "120 mm", # Outlier (mismatch!)
-                    "unit": "mm"
-                }
-            },
-            {
-                "document_id": "QM-001",
-                "document_type": "QM_EFORM",
-                "fields": {
-                    "project_code": "PRJ-2026-T3",
-                    "road_name": "Karimnagar Bypass",
-                    "measured_val": "15 cm", # Equivalent unit -> 150 mm (Matches QCR!)
-                    "unit": "cm"
-                }
-            }
-        ]
+        from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record
+        from ai_engine.testing.discrepancy_scenario_factory import create_scenario
+        
+        base_record = create_pmgsy_grounded_base_record(15, seed=42)
+        document_inputs = create_scenario(base_record, "majority_consensus")
 
         res = analyze_documents(document_inputs)
         self.assertEqual(res["processing_status"], "success")

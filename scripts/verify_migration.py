@@ -25,11 +25,14 @@ except Exception as e:
 
 # 2. Test Synthetic QCR Generation Workflow
 try:
-    record = generate_qcr_record(1)
+    from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record
+    record = create_pmgsy_grounded_base_record(1, seed=42)
     print("LOG: [OK] Stage 2: Synthetic QCR Record generated successfully.")
     print(f"   Record ID: {record['image_id']}")
     print(f"   Road: {record['road_name']}")
+    print(f"   District/Block: {record['district']} / {record['block']}")
     print(f"   Parameter: {record['parameter']} (Required={record['required_value']}, Measured={record['measured_value']})")
+    print(f"   Provenance: {record['provenance']}")
 except Exception as e:
     print(f"LOG: [FAIL] Stage 2: QCR Generation failed: {str(e)}")
     sys.exit(1)

@@ -29,19 +29,18 @@ class TestPhase21Hardened(unittest.TestCase):
 
     def test_2_document_disagreement_tie(self):
         # 2-document disagreement with no authority results in ambiguous conflict (Task 8.4)
-        rec_a = CanonicalRecord()
-        rec_a.set_field("document_id", "DOC-A", "QCR", "document_id")
-        rec_a.set_field("document_type", "QCR", "QCR", "document_type")
-        rec_a.set_field("project_code", "PRJ-TIE", "QCR", "project_code")
-        rec_a.set_field("road_name", "Route A", "QCR", "road_name")
-        rec_a.set_field("inspection_date", "2026-08-10", "QCR", "inspection_date")
-
-        rec_b = CanonicalRecord()
-        rec_b.set_field("document_id", "DOC-B", "TEST_DATASHEET", "document_id")
-        rec_b.set_field("document_type", "TEST_DATASHEET", "TEST_DATASHEET", "document_type")
-        rec_b.set_field("project_code", "PRJ-TIE", "TEST_DATASHEET", "project_code")
-        rec_b.set_field("road_name", "Route A", "TEST_DATASHEET", "road")
-        rec_b.set_field("inspection_date", "2026-08-15", "TEST_DATASHEET", "inspection_date")
+        from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record, generate_document_variants
+        from ai_engine.data_integration.unified_data_builder import build_canonical_record
+        
+        base_record = create_pmgsy_grounded_base_record(30, seed=42)
+        variants = generate_document_variants(base_record)
+        
+        # Mutate to create an inspection_date tie discrepancy
+        variants["QCR"]["fields"]["inspection_date"] = "2026-08-10"
+        variants["TEST_DATASHEET"]["fields"]["inspection_date"] = "2026-08-15"
+        
+        rec_a = build_canonical_record(variants["QCR"]["document_id"], "QCR", variants["QCR"]["fields"])
+        rec_b = build_canonical_record(variants["TEST_DATASHEET"]["document_id"], "TEST_DATASHEET", variants["TEST_DATASHEET"]["fields"])
 
         discrepancies = detect_discrepancies([rec_a, rec_b])
         # Should generate an ambiguous conflict
@@ -51,26 +50,20 @@ class TestPhase21Hardened(unittest.TestCase):
 
     def test_3_document_disagreement_majority(self):
         # 3-document disagreement (150, 150, 120) -> 150 consensus, 120 outlier (Task 8.5)
-        rec_a = CanonicalRecord()
-        rec_a.set_field("document_id", "DOC-A", "QCR", "document_id")
-        rec_a.set_field("document_type", "QCR", "QCR", "document_type")
-        rec_a.set_field("project_code", "PRJ-MAJ", "QCR", "project_code")
-        rec_a.set_field("road_name", "Route A", "QCR", "road_name")
-        rec_a.set_field("measured_value", "150", "QCR", "measured_value")
-
-        rec_b = CanonicalRecord()
-        rec_b.set_field("document_id", "DOC-B", "TEST_DATASHEET", "document_id")
-        rec_b.set_field("document_type", "TEST_DATASHEET", "TEST_DATASHEET", "document_type")
-        rec_b.set_field("project_code", "PRJ-MAJ", "TEST_DATASHEET", "project_code")
-        rec_b.set_field("road_name", "Route A", "TEST_DATASHEET", "road")
-        rec_b.set_field("measured_value", "120", "TEST_DATASHEET", "measured_value")
-
-        rec_c = CanonicalRecord()
-        rec_c.set_field("document_id", "DOC-C", "QM_EFORM", "document_id")
-        rec_c.set_field("document_type", "QM_EFORM", "QM_EFORM", "document_type")
-        rec_c.set_field("project_code", "PRJ-MAJ", "QM_EFORM", "project_code")
-        rec_c.set_field("road_name", "Route A", "QM_EFORM", "road_name")
-        rec_c.set_field("measured_value", "150", "QM_EFORM", "measured_value")
+        from ai_engine.testing.pmgsy_fixture_factory import create_pmgsy_grounded_base_record, generate_document_variants
+        from ai_engine.data_integration.unified_data_builder import build_canonical_record
+        
+        base_record = create_pmgsy_grounded_base_record(31, seed=42)
+        variants = generate_document_variants(base_record)
+        
+        # Mutate measured values to create majority mismatch
+        variants["QCR"]["fields"]["measured_value"] = "150"
+        variants["TEST_DATASHEET"]["fields"]["measured_value"] = "120"
+        variants["QM_EFORM"]["fields"]["measured_value"] = "150"
+        
+        rec_a = build_canonical_record(variants["QCR"]["document_id"], "QCR", variants["QCR"]["fields"])
+        rec_b = build_canonical_record(variants["TEST_DATASHEET"]["document_id"], "TEST_DATASHEET", variants["TEST_DATASHEET"]["fields"])
+        rec_c = build_canonical_record(variants["QM_EFORM"]["document_id"], "QM_EFORM", variants["QM_EFORM"]["fields"])
 
         discrepancies = detect_discrepancies([rec_a, rec_b, rec_c])
         self.assertEqual(len(discrepancies), 1)
